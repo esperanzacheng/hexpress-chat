@@ -1,0 +1,25 @@
+<%- include('./partials/setup'); %>
+        <script src="http://localhost:3000/socket.io/socket.io.js" defer ></script>
+        <script src="/scripts/chat.js" defer></script>
+<%- include('./partials/header'); %>
+        <div class="chat-container">
+            <div id="room-container">
+                <div class="room-item">
+                    <div class="room-item-head">Create New Compartment ↓</div>
+                </div>
+                <form action="/compartment" method="POST" class="room-item">
+                    <input class="room-item-input" name="compartment" type="text" placeholder="Type Here" required>
+                    <button class="room-item-button" type="submit">Create</button>
+                </form>
+                <div class="room-item">
+                    <div class="room-item-head">Or ... Select to Chat ↓</div>
+                </div>
+                <% Object.keys(rooms).forEach(room => { %>
+                    <a class="room-item" href="/<%= room %>">
+                        <div class="room-item-name"><%= room %></div>
+                        <div class="room-item-link" >Join</div>
+                        </a>
+                <% }) %>
+            </div>
+        </div>
+<%- include('./partials/footer'); %>

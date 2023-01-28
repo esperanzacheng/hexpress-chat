@@ -1,0 +1,13 @@
+<%- include('./partials/setup'); %>
+        <script src="/scripts/index.js" defer></script>
+<%- include('./partials/header'); %>
+        <div class="ticket-container">
+            <div class="ticket-text" id="ticket-text">Click to Aboard ↓</div>
+            <div class="name-text" id="name-text">First, Vow Please ↓</div>
+            <img class="ticket-img" id="ticket" src="/images/ticket.jpeg"></img>
+            <form class="name-container" id="name-form">
+                <div class="name-vow">I, <input id="name-input" type="text" placeholder="Type Your Wizard Name" required/>, Solemnly Swear That I Am Up To No Good</div>
+                <button type="submit" id="name-button">Aboard</button>
+            </form>
+        </div>
+<%- include('./partials/footer'); %>
