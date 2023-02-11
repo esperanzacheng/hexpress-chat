@@ -1,0 +1,232 @@
+@font-face {
+  font-family: 'MagicFont';
+  src: url('/fonts/QuiteMagicalRegular-8VA2.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'HPFont';
+  src: url('/fonts/HarryPotter-ov4z.ttf') format('truetype');
+}
+
+html,body{
+  margin: 0;
+  font-family: 'MagicFont', Times, serif;
+  width: 100%;
+  padding: 0px;
+  overflow-x: hidden; 
+  position: relative;
+  background-color: #F5E4CB;
+}
+
+label,input {
+  font-family: 'MagicFont', Times, serif;
+}
+
+input {
+  padding-left: 10px;
+  border: none;
+}
+
+input:focus {
+  outline: none;
+}
+
+.home-navbar {
+  display: grid;
+  place-items: center start;
+  margin: auto;
+  grid-template-columns: 80px 300px auto repeat(3, 70px);
+  height: 80px;
+  background-color: #932020;
+}
+
+.home-navbar-logo-box {
+  padding: 5px;
+  display: grid;
+  place-items: center;
+}
+
+.home-navbar-logo {
+  width: 80%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.home-navbar-search-bar {
+  height: 45%;
+  width: 85%;
+  border-radius: 10px;
+  font-size: 24px;
+  background-color: #FFFFFF;
+  opacity: 0.95;
+  color: #272525; 
+}
+
+.home-navbar-buffer {
+  width: 100%;
+  height: 100%;
+}
+
+.home-navbar-item-box {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  background-color: #FFFFFF;
+  opacity: 0.95;
+  border-radius: 50%;
+  display: grid;
+  place-self: center;
+  place-items: center;
+  z-index: 100;
+}
+
+.home-navbar-item-text {
+  font-family: 'MagicFont', Times, serif;
+  font-size: 16px;
+  color: #932020;
+  text-align: center;
+  font-weight: 900;
+}
+
+.ticket-container {
+  display: grid;
+  height: calc(100vh - 180px);
+  place-items: center;
+  gap: 5px;
+  grid-template-rows: 1fr 2fr;
+}
+
+.ticket-text {
+  font-family: 'MagicFont', Times, serif;
+  font-size: 27px;
+  place-self: end center;
+  color: #272525;
+}
+
+.name-text {
+  font-family: 'MagicFont', Times, serif;
+  font-size: 27px;
+  place-self: end center;
+  color: #272525;
+  display: none;
+}
+
+.ticket-img {
+  place-self: start center;
+  object-fit: cover;
+  width: 300px;
+  cursor: pointer;
+}
+
+.footer-border {
+  height: 10px;
+  background-color: #FFC53F;
+}
+
+.footer {
+  display: grid;
+  place-items: center;
+  height: 80px;
+  background-color: #932020;
+  gap: 5px;
+}
+
+.footer-text-large {
+  font-family: 'MagicFont', Times, serif;
+  color: #FFFFFF;
+  opacity: 0.95;
+  font-size: 16px;
+  place-self: end center;
+}
+
+.footer-text-small {
+  font-family: 'MagicFont', Times, serif;
+  color: #FFFFFF;
+  opacity: 0.95;
+  font-size: 13px;
+  place-self: start center;
+}
+
+.home-navbar-website-name {
+  height: 45%;
+  width: 65%;
+  border-radius: 10px;
+  font-size: 24px;
+  background-color: #FFFFFF;
+  opacity: 0.95;
+  color: #932020; 
+  display: grid;
+  place-items: center;
+}
+
+.home-navbar-item-box-index {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  background-color: #FFFFFF;
+  opacity: 0.95;
+  border-radius: 50%;
+  display: grid;
+  place-self: center;
+  place-items: center;
+  grid-column: 7/8;
+  text-decoration: none;
+}
+
+/* navbar */
+#navbar-login {
+  position: relative;
+}
+
+.banner-member-center-container {
+  position: absolute;
+  width: 140px;
+  height: 200px;
+  top: 85px;
+  right: 0;
+  background-color: #932020;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px #AABBCC;
+  display: grid;
+  grid-template-rows: 1fr 2fr 1fr;
+  place-items: center;
+  cursor: default;
+  display: none;
+}
+
+.banner-member-center-container-img {
+  border-radius: 50%;
+  border: 2px solid #272525;
+  background-color: #FFFFFF;
+  width: 60%;
+  cursor: pointer;
+}
+
+.banner-member-center-container-img img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-member-center-container-text {
+  color: #FFFFFF;
+  font-size: 24px;
+}
+
+.banner-member-center-container-button {
+  height: 90%;
+  display: grid;
+  place-items: center;
+}
+
+.banner-member-center-container-button  button{
+  color: #272525;
+  font-family: 'MagicFont', Times, serif;
+  font-size: 24px;
+  border-radius: 30%;
+  background-color:#FFC53F;
+  cursor: pointer;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 2px solid #272525;
+}

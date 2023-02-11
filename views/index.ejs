@@ -1,0 +1,19 @@
+<%- include('./partials/setup'); %>
+        <script src="/scripts/index.js" defer></script>
+</head>
+<body>
+        <div class="home-navbar"> 
+                <a class="home-navbar-logo-box" href="/chat">
+                        <img class="home-navbar-logo" src="/images/logo-white.png"/>
+                </a>   
+                <div class="home-navbar-website-name"> The Hogwarts Express </div>
+                <a class="home-navbar-item-box-index" id="navbar-login"  href="/login">
+                        <div class="home-navbar-item-text">Login</div>
+                </a>
+        </div>
+        <div class="ticket-container">
+            <div class="ticket-text" id="ticket-text">Click to Board ↓</div>
+            <img class="ticket-img" id="ticket" src="/images/ticket.jpeg"></img>
+        </div>
+        <div class="footer-border"></div>
+<%- include('./partials/footer'); %>

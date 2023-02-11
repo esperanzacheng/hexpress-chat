@@ -1,0 +1,48 @@
+<%- include('./partials/setup'); %>
+                <link rel="stylesheet" href='/styles/room.css' />
+                <script>
+                        const ROOM_ID = "<%= roomId %>"
+                </script>
+                <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js" defer></script>
+                <script src="https://www.thehogwartsexpress.com/socket.io/socket.io.js" defer></script>
+                <script src="/scripts/room.js" defer></script>
+<%- include('./partials/header'); %>
+        <div id="video-container">
+                <section id="members-container">
+                        <div id="members-header">
+                                <p>Participants</p>
+                                <strong id="members__count">0</strong>
+                        </div>
+
+                        <div id="member-list">
+                        </div>
+                </section>
+
+                <section id="stream__container">
+                        <div id="stream__box"></div>
+                        <div id="video-grid"></div>
+                        <div class="video-button-container">
+                                <div id="mute-button" class="video-button-control">
+                                        <img src="/images/mic.png" />
+                                </div>
+                                <div id="camera-button" class="video-button-control">
+                                        <img src="/images/camera.png" />
+                                </div>
+                                <div id="leave-button" class="video-button-leave">
+                                        <img src="/images/phone.png" />
+                                </div>  
+                        </div>
+                        <!-- <button id="join-btn">Join Stream</button> -->
+                </section>
+                <section id="messages-container">
+                        <div id="members-header">
+                                <p>Chat</p>
+                        </div>
+                        <div id="messages"></div>
+                        <form id="message-form">
+                            <input id="message-input" type="text" name="message" placeholder="Send a message...." />
+                        </form>
+                </section>
+        </div>
+
+<%- include('./partials/footer'); %>

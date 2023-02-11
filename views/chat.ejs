@@ -1,0 +1,49 @@
+<%- include('./partials/setup'); %>
+        <link rel="stylesheet" href='/styles/car.css' />
+        <link rel="stylesheet" href='/styles/chat.css' />
+        <script>
+            const roomName = "<%= roomName %>"
+        </script>
+        <script src="/scripts/navbar.js" defer></script>
+        <script src="http://localhost:3000/socket.io/socket.io.js" defer ></script>
+        <script src="/scripts/compartment.js" defer></script>
+<%- include('./partials/header'); %>
+        <div class="chat-container">
+            <div id="chat-container">
+                <div class="chat-item" id="direct-to-chat-button">
+                    <img id="direct-to-chat-button-img" src="/images/airplane.png"/>
+                    <div id="direct-to-chat-button-border"></div>
+                </div>
+                <a class="chat-item" id="redirect-button" href="/car/test.general">Test</a>
+                <div class="chat-item">WH</div>
+                <div class="chat-item" id="create-car-button">+
+                    <form class="create-car-form" id="create-car-form">
+                        <input class="create-car-form-input" id="create-car-form-input" name="name" type="text" placeholder="Type Here" required>
+                        <button class="create-car-form-button" id="create-car-form-button">Create</button>
+                    </form>
+                </div>
+                
+            </div>
+            <div id="room-container">
+                <% Object.keys(rooms).forEach(room => { %>
+                    <div class="room-item">
+                        <div class="room-item-name"><%= room %></div>
+                        <div class="room-item-link" >Join</div>
+                    </div>
+                <% }) %>
+                <form action="/api/chatroom" class="room-item">
+                    <input class="room-item-input" name="compartment" type="text" placeholder="Type Here" required>
+                    <button class="room-item-button" type="submit">Create</button>
+                </form>
+            </div>
+            <div id="chat-room-container">
+                <div id="message-container">
+                    <form id="send-container">
+                        <input type="text" id="message-input" placeholder="Type to Chat">
+                        <div id="video-button" class="video-button">Floo a Head</div>
+                        <button type="submit" id="send-button" class="send-button">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+<%- include('./partials/footer'); %>
