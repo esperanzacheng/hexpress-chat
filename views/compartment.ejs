@@ -1,9 +1,11 @@
 <%- include('./partials/setup'); %>
+        <link rel="stylesheet" href='/styles/compartment.css' />
+        <script src="/scripts/navbar.js" defer></script>
         <script>
         const roomName = "<%= roomName %>"
         </script>
         <script src="http://localhost:3000/socket.io/socket.io.js" defer ></script>
-        <script src="/scripts/chat.js" defer></script>
+        <script src="/scripts/compartment.js" defer></script>
 <%- include('./partials/header'); %>
         <div class="compartment-container">
                 <div id="message-container">

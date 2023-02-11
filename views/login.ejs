@@ -1,0 +1,66 @@
+<%- include('./partials/setup'); %>
+        <link rel="stylesheet" href='/styles/login.css' />
+        <script src="/scripts/login.js" defer></script>
+    </head>
+    <body>
+        <div class="home-navbar"> 
+            <a class="home-navbar-logo-box" href="/chat">
+                <img class="home-navbar-logo" src="/images/logo-white.png"/>
+            </a>   
+            <div class="home-navbar-website-name"> The Hogwarts Express </div>
+            <a class="home-navbar-item-box-index" id="navbar-login"  href="/login">
+                <div class="home-navbar-item-text">Login</div>
+            </a>
+        </div>
+        <div class="login-container">
+            <img class="login-img-conductor" id="ticket" src="/images/conductor.png"></img>
+            <img class="login-img-hedwig" id="ticket" src="/images/hedwig.png"></img>
+            <div class="login-form-container">
+                <form class="login-form" id="login-form">
+                    <div class="empty"></div>
+                    <div class="login-text">Login to Board</div>
+                    <div id="wrong-email">Email is Not Registered Yet</div>
+                    <div id="wrong-password">Password is Wrong</div>
+                    <div id="login-email-no-filled-alert">Please Fill in Email</div>
+                    <label class="login-label-email" for="register-email">Boarding Email: </label>
+                    <input id="login-email" class="login-input-email" type="email" name="email" placeholder="rubeus@hogwarts.com" required/>
+                    <div id="login-password-no-filled-alert">Please Fill in Password</div>
+                    <label class="login-label-password" for="register-password">Boarding Password: </label>
+                    <input id="login-password" class="login-input-password" type="password" name="password" placeholder="fang*1206" required/>
+                    <div  id="login-vow-alert">Please Vow Properly Like a Wizard</div>
+                    <input for="login-vow-text" type="checkbox" id="login-vow" class="login-vow-check" required/>
+                    <label class="login-vow" for="login-vow">I SOLEMNLY SWEAR THAT I AM UP TO NO GOOD</label>
+                    <button type="submit" id="login-button" class="login-button">Go Aboard</button>
+                </form>
+                <div class="switch-to-login" id="switch-to-login">
+                    <div class="switch-to-login-text">Login Here</div>
+                    <div class="switch-to-login-arrow">←</div> 
+                </div>
+                <form class="register-form" id="register-form">
+                    <div class="empty"></div>
+                    <div class="register-text">Fill out to Register</div>
+                    <div id="register-success">Congrats! Login to board the train!</div>
+                    <div id="username-used-alert">This Username is Used</div>
+                    <div id="register-username-no-filled-alert">Please Fill in Username</div>
+                    <label class="register-label-username" for="register-name">Wizard Name: </label>
+                    <input id="register-name" class="register-input-username" type="text" name="username" placeholder="Rubeus Hagrid" required/>
+                    <div id="email-used-alert">This Email is Used</div>
+                    <div id="register-email-no-filled-alert">Please Fill in Email</div>
+                    <label class="register-label-email" for="register-email">Boarding Email: </label>
+                    <input id="register-email" class="register-input-email" type="email" name="email" placeholder="rubeus@hogwarts.com" required/>
+                    <div id="password-alert">Password must longer than 6 digits</div>
+                    <div id="register-password-no-filled-alert">Please Fill in Password</div>
+                    <label class="register-label-password" for="register-password">Boarding Password: </label>
+                    <input id="register-password" class="register-input-password" type="password" name="password" placeholder="fang*1206" required/>
+                    <div id="register-vow-alert">Please Check the Following Box Like a Wizard</div>
+                    <input for="register-vow" type="checkbox" id="register-vow" class="register-vow-check" required/>
+                    <label class="register-vow" for="register-vow">I AM READY TO UNFOG THE FUTURE</label>
+                    <button type="submit" id="register-button" class="register-button">Register</button>
+                </form>
+                <div class="switch-to-register" id="switch-to-register">
+                    <div class="switch-to-register-text">Register</div>
+                    <div class="switch-to-register-arrow">Here →</div> 
+                </div>
+            </div>
+        </div>
+<%- include('./partials/footer'); %>

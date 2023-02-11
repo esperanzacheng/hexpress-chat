@@ -10,7 +10,7 @@
 
 html,body{
   margin: 0;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'MagicFont', Times, serif;
   width: 100%;
   padding: 0px;
   overflow-x: hidden; 
@@ -35,7 +35,7 @@ input:focus {
   display: grid;
   place-items: center start;
   margin: auto;
-  grid-template-columns: 80px 300px auto repeat(4, 70px);
+  grid-template-columns: 80px 300px auto repeat(3, 70px);
   height: 80px;
   background-color: #932020;
 }
@@ -77,6 +77,7 @@ input:focus {
   display: grid;
   place-self: center;
   place-items: center;
+  z-index: 100;
 }
 
 .home-navbar-item-text {
@@ -117,79 +118,6 @@ input:focus {
   cursor: pointer;
 }
 
-.name-container {
-  place-self: start center;
-  grid-template-rows: 2fr 2fr;
-  width: 300px;
-  background-color: #9D866E;
-  height: 185px;
-  border-radius: 5px;
-  display: none;
-}
-
-.name-vow {
-  color: #FFFAFA;
-  font-size: 24px;
-  font-family: 'HPFont', Times, serif;
-  padding-left: 24px;
-  padding-right: 24px;
-  padding-top: 24px;
-}
-
-#name-input {
-  place-self: start center;
-  font-size: 24px;
-  height: 24px;
-  width: 200px;
-}
-
-#name-button {
-  font-family: 'MagicFont', Times, serif;
-  font-size: 24px;
-  color: #FFFAFA;
-  background-color: #932020;
-  border-radius: 30%;
-  height: 40px;
-  margin-top: 10px;
-}
-
-#video-container {
-  display: grid;
-  height: calc(100vh - 180px);
-}
-
-#video-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 350px);
-  grid-auto-rows: 350px;
-}
-
-.video-box {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  position: relative;
-  border: 3px solid #FFFFFF;
-}
-
-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.video-mute-button {
-  position: absolute;
-  top: 85%;
-  left: 48%;
-  z-index: 20;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: #932020;
-  border: 1px solid #272525;
-}
-
 .footer-border {
   height: 10px;
   background-color: #FFC53F;
@@ -219,136 +147,86 @@ video {
   place-self: start center;
 }
 
-.chat-container {
+.home-navbar-website-name {
+  height: 45%;
+  width: 65%;
+  border-radius: 10px;
+  font-size: 24px;
+  background-color: #FFFFFF;
+  opacity: 0.95;
+  color: #932020; 
   display: grid;
-  height: calc(100vh - 180px);
-  grid-template-columns: 1fr 2.5fr;
+  place-items: center;
 }
 
-#room-container {
+.home-navbar-item-box-index {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  background-color: #FFFFFF;
+  opacity: 0.95;
+  border-radius: 50%;
   display: grid;
-  background-color: #3B3838;
-  grid-template-rows: repeat(auto-fill, 60px);
-  border-right: 2px solid #FFFAFA;
-}
-
-.room-item {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  border-top: 1px solid #FFFAFA;
-  border-bottom: 1px solid #FFFAFA;
+  place-self: center;
+  place-items: center;
+  grid-column: 7/8;
   text-decoration: none;
 }
 
-.room-item-head {
-  grid-column: 1/3;
+/* navbar */
+#navbar-login {
+  position: relative;
+}
+
+.banner-member-center-container {
+  position: absolute;
+  width: 140px;
+  height: 200px;
+  top: 85px;
+  right: 0;
+  background-color: #932020;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px #AABBCC;
   display: grid;
+  grid-template-rows: 1fr 2fr 1fr;
   place-items: center;
-  font-family: 'MagicFont', Times, serif;
-  font-size: 30px;
-  font-weight: 700;
-  background-color: #FFFAFA;
-  color: #272525;
+  cursor: default;
+  display: none;
+}
+
+.banner-member-center-container-img {
+  border-radius: 50%;
+  border: 2px solid #272525;
+  background-color: #FFFFFF;
+  width: 60%;
+  cursor: pointer;
+}
+
+.banner-member-center-container-img img{
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
-.room-item-input {
-  place-self: center start;
-  font-family: 'MagicFont', Times, serif;
-  font-size: 30px;
-  color: #FFFAFA;
-  padding-left: 20px;
-  background-color: #3B3838;
-  width: 90%;
+.banner-member-center-container-text {
+  color: #FFFFFF;
+  font-size: 24px;
 }
 
-.room-item-button {
-  place-self: center;
+.banner-member-center-container-button {
+  height: 90%;
+  display: grid;
+  place-items: center;
+}
+
+.banner-member-center-container-button  button{
+  color: #272525;
   font-family: 'MagicFont', Times, serif;
-  font-size: 30px;
-  color: #FFFAFA;
-  background-color: #932020;
-  border: 2px solid rgba(255, 250, 250, .5);
+  font-size: 24px;
   border-radius: 30%;
-  margin-right: 10px;
-}
-
-.room-item-name {
-  place-self: center start;
-  font-family: 'MagicFont', Times, serif;
-  font-size: 30px;
-  color: #FFFAFA;
-  padding-left: 20px;
-}
-
-.room-item-link {
-  place-self: center;
-  font-family: 'MagicFont', Times, serif;
-  font-size: 30px;
-  color: #FFFAFA;
-}
-
-.compartment-container {
-  display: grid;
-  height: calc(100vh - 180px);
-}
-
-#message-container {
-  background-color: #3B3838;
-  font-family: 'MagicFont', Times, serif;
-  font-size: 30px;
-}
-#message-container div {
-  background-color: #CCC;
-  padding: 5px;
-  padding-left: 20px;
-}
-#message-container div:nth-child(2n) {
-  background-color: #FFF;
-  padding-left: 20px;
-}
-#send-container {
-  position: fixed;
-  bottom: 90px;
-  background-color: white;
-  width: calc(100% - 20px);
-  display: grid;
-  grid-template-columns: auto 150px 80px;
-  font-size: 30px;
-  padding-left: 20px;
-}
-.video-button {
-  display: grid;
-  text-align: left;
-  place-self: center;
-  font-family: 'MagicFont', Times, serif;
-  font-size: 30px;
-  padding-left: 10px !important;
-  padding-right: 10px !important;
-  /* margin-right: -20px; */
-  border: 2px solid #3B3838;
-  border-radius: 30%;
+  background-color:#FFC53F;
   cursor: pointer;
-  height: 55%;
-  background-color: #067D10 !important;
-  color: #FFFAFA;
-}
-.send-button {
-  place-self: center;
-  font-family: 'MagicFont', Times, serif;
-  font-size: 30px;
   padding-left: 10px;
   padding-right: 10px;
-  margin-right: 20px;
-  border: 2px solid #3B3838;
-  border-radius: 30%;
-  cursor: pointer;
-  height: 80%;
-  background-color: #932020;
-  color: #FFFAFA;
-}
-#message-input {
-  flex-grow: 1;
-  font-size: 30px;
+  border: 2px solid #272525;
 }

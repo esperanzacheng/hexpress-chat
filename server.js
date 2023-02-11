@@ -3,17 +3,22 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const path = require("path");
+const db = require('./config/db')
+db.getConnection();
+
+// const bodyParser = require('body-parser');
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
-const rooms = { };
+const indexRoute = require('./routes/indexRoute.js')
+const rooms = { 'test': {'users': {}} };
 
-// index page
-app.get('/', function(req, res) {
-  res.render('index', { title: 'The Hogwarts Express' });
-});
+app.use("/", indexRoute);
+
 
 // video chat page
 app.get('/floo/:room', (req, res) => {
@@ -48,12 +53,13 @@ io.on('connection', socket => {
   })
 })
 
-// text chat page
+
 app.get('/chat', (req, res) => {
-  res.render('chat', { title: 'Chat', rooms: rooms});
+  // res.render('chat', { title: 'Chat', rooms: rooms, roomName: req.params.compartment});
+  res.render('chat', { title: 'Chat', rooms: rooms, roomName: 'test'});
 })
 
-app.post('/compartment', (req, res) => {
+app.post('/api/chatroom', (req, res) => {
   if (rooms[req.body.compartment] != null) {
     return res.redirect('/')
   }
@@ -63,9 +69,9 @@ app.post('/compartment', (req, res) => {
   io.emit('room-created', req.body.compartment)
 })
 
-app.get('/:compartment', (req, res) => {
+app.get('/chat/:compartment', (req, res) => {
   if (rooms[req.params.compartment] == null) {
-    return res.redirect('/')
+    // return res.redirect('/')
   }
   res.render('compartment', { title: 'Compartment', roomName: req.params.compartment })
 })

@@ -1,20 +1,28 @@
 const socket = io('/')
 const videoGrid = document.getElementById('video-grid')
-const myPeer = new Peer(undefined, {
-  host: '/',
-  port: '3001'
-})
+
+const myPeer = new Peer()
 
 const myVideo = document.createElement('video');
 myVideo.muted = true;
-const peers = {};
-navigator.mediaDevices.getUserMedia({
-  video: true,
+
+const constraints = {
+  video: {
+    width: {min: 640, ideal: 1920, max: 1920},
+    height: {min: 480, ideal: 1080, max: 1080},
+  },
   audio: true
-}).then(stream => {
+}
+
+const peers = {};
+navigator.mediaDevices.getUserMedia(constraints)
+.then(stream => {
   addVideoStream(myVideo, stream);
-  // addMutedButton(document.querySelector('.video-box'), myVideo);
-  addMutedButton(myVideo);
+  addMutedButton(stream);
+  addCameraButton(stream);
+  addLeaveButton(); 
+
+  // console.log(peers, 'ha');
 
   myPeer.on('call', call => {
     call.answer(stream);
@@ -34,6 +42,7 @@ socket.on('user-disconnected', userId => {
 })
 
 myPeer.on('open', id => {
+  console.log(id)
   socket.emit('join-room', ROOM_ID, id);
 })
 
@@ -48,34 +57,54 @@ function connectToNewUser(userId, stream) {
   })
 
   peers[userId] = call;
+  console.log(peers[userId]['_localStream']);
 }
 
 function addVideoStream(video, stream) {
-  // const videoBox = document.createElement('div');
-  // videoBox.classList.add('video-box');
   video.srcObject = stream;
   video.addEventListener('loadedmetadata', () => {
     video.play();
   })
-  // videoGrid.append(videoBox);
-  // videoBox.append(video);
+
   videoGrid.append(video);
 }
 
-function addMutedButton(video) {
-  const mutedButton = document.createElement('div');
-  mutedButton.classList.add('video-mute-button');
-  video.append(mutedButton);
+function addMutedButton(stream) {
+  const mutedButton = document.getElementById('mute-button');
   mutedButton.addEventListener('click', (e) => {
     e.preventDefault();
-    if(video.muted == true) {
-      video.muted = false;
-      mutedButton.style.backgroundColor = '#FFC53F';
-    } else {
-      video.muted = true;
-      mutedButton.style.backgroundColor = '#932020';
+    let audioTrack = stream.getTracks().find(track => track.kind === 'audio');
+
+    if(audioTrack.enabled){
+        audioTrack.enabled = false;
+        mutedButton.style.backgroundColor = '#932020';
+    }else{
+        audioTrack.enabled = true;
+        mutedButton.style.backgroundColor = '#067D10';
     }
   })
 }
 
+function addCameraButton(stream) {
+  const cameraButton = document.getElementById('camera-button');
+  cameraButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    let videoTrack = stream.getTracks().find(track => track.kind === 'video')
 
+    if(videoTrack.enabled){
+        videoTrack.enabled = false;
+        cameraButton.style.backgroundColor = '#932020';
+    }else{
+        videoTrack.enabled = true;
+        cameraButton.style.backgroundColor = '#067D10';
+    }
+  })
+}
+
+function addLeaveButton() {
+  const cameraButton = document.getElementById('leave-button');
+  cameraButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location = '/chat';
+  }) 
+}
