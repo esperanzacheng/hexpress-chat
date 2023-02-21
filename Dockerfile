@@ -1,4 +1,5 @@
 FROM node:alpine
-COPY . /letschat
-WORKDIR /letschat
+COPY . /hexpress
+WORKDIR /hexpress
+RUN npm install
 CMD npm run start

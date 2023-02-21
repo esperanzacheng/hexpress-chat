@@ -4,25 +4,21 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
 const config = require('../config/config');
 const SECRET = config.jwtKey
+const auth = require('../controllers/authController')
 
 exports.getAllUser = async(req, res, next) => {
     try {
-        if (req.headers["cookie"]) {
-            const authHeader = req.headers["cookie"];
-            const token = authHeader.split("=")[1];
-            const user = jwt.verify(token, SECRET);
-            if (user) {
-                const allUser = await User.find({});
-                const allUserName = []
-                allUser.forEach(e => { 
-                    allUserName.push(e['username'])
-                })
-                res.status(200).json(allUserName);
-            } else {
-                res.status(400).json("token is invalid");
-            }
+        const user = await auth.authUser(req.headers["cookie"])
+
+        if (user === 401) {
+            res.status(401).json("Unauthorized");
         } else {
-            res.status(400).json("token is missing");
+            const allUser = await User.find({});
+            const allUserName = []
+            allUser.forEach(e => { 
+                allUserName.push(e['username'])
+            })
+            res.status(200).json(allUserName);
         }
     } catch (err) {
         if (!err.statusCode) {
@@ -61,30 +57,21 @@ exports.postUser = async(req, res, next) => {
     }
 }
 
-exports.patchUser = async(req, res, next) => {
+exports.putUser = async(req, res, next) => {
     try {
-        if (req.headers["cookie"]) {
-            const authHeader = req.headers["cookie"];
-            const token = authHeader.split("=")[1];
-            const user = jwt.verify(token, SECRET);
-            if (user) {
-                const thisUser = await User.findOneAndUpdate(
-                    { username: user['username'] }, 
-                    { $push: { cars: { car_name: req.body.cars }}}, 
-                    { new: true }
-                );
-                const thisCar = await Car.findOneAndUpdate(
-                    { name: req.body.cars},
-                    { $push: { members: { member_name: user['username'] }}},
-                    { new: true }
-                )
-                res.status(200).json('ok');
-            } else {
-                res.status(400).json("token is invalid");
-            }
+        const user = await auth.authUser(req.headers["cookie"])
+
+        if (user === 401) {
+            res.status(401).json("Unauthorized");
         } else {
-            res.status(400).json("token is missing");
-        }
+            const thisUser = await User.findOneAndUpdate(
+                { _id: user['_id'] }, 
+                { $set: req.body }, 
+                { new: true }
+            );
+
+            res.status(200).json(thisUser);
+        } 
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
@@ -93,3 +80,55 @@ exports.patchUser = async(req, res, next) => {
     }
 }
 
+// exports.patchUser = async(req, res, next) => {
+//     try {
+//         const user = await auth.authUser(req.headers["cookie"])
+//         let thisUser;
+//         let targetUser;
+//         if (user === 401) {
+//             res.status(401).json("Unauthorized");
+//         } else {
+//             if (req.body.action === 'add') {
+//                 targetUser = await User.findById(req.body.target_id)
+//                 thisUser = await User.findOneAndUpdate(
+//                     { _id: user['_id'] },
+//                     { $addToSet: { friends: { _id: targetUser['_id'], name: targetUser['username'] }}},
+//                     { new: true }
+//                 );
+//             } else if (req.body.action === 'remove') {
+//                 targetUser
+//                 thisUser = await User.findOneAndUpdate(
+//                     { _id: user['_id'] },
+//                     { $pull: { friends: { _id: thisCar['_id'] }}},
+//                     { new: true }
+//                 );
+//             }
+
+//             res.status(200).json(thisCar);
+//         }
+//     } catch (err) {
+//         if (!err.statusCode) {
+//             err.statusCode = 500;
+//         }
+//         next(err);
+//     }
+// }
+
+exports.deleteUser = async(req, res, next) => {
+    try {
+        const user = await auth.authUser(req.headers["cookie"])
+
+        if (user === 401) {
+            res.status(401).json("Unauthorized");
+        } else {
+            const thisUser = await User.deleteOne({ _id: user['_id'] });
+
+            res.status(200).json('ok');
+        } 
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}

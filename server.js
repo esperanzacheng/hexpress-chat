@@ -25,10 +25,12 @@ app.get('/floo/:room', (req, res) => {
   res.render('room', { title: 'Video Chat', roomId: req.params.room });
 })
 
-io.on('connection', socket => {
+
+io.on('connection', (socket) => {
   // video chat control
   socket.on('join-room', (roomId, userId) => {
     socket.join(roomId);
+    console.log(`video-room: ${roomId}, video-userId: ${userId}`)
     socket.to(roomId).emit('video-user-connected', userId);
 
     socket.on('disconnect', () => {
@@ -40,9 +42,11 @@ io.on('connection', socket => {
   socket.on('new-user', (room, name) => {
     socket.join(room)
     rooms[room].users[socket.id] = name
+    console.log(`text-room: ${room}, text-name: ${name}`)
     socket.to(room).emit('user-connected', name)
   })
   socket.on('send-chat-message', (room, message) => {
+    console.log(`text-message: ${message}, text-name: ${rooms[room].users[socket.id]}`)
     socket.to(room).emit('chat-message', { message: message, name: rooms[room].users[socket.id] })
   })
   socket.on('disconnect', () => {
@@ -85,3 +89,4 @@ function getUserRooms(socket) {
 }
 
 server.listen(3000);
+// server.listen(3000, '0.0.0.0');

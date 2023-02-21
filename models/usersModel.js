@@ -19,31 +19,31 @@ const userSchema = new mongoose.Schema({
         required: true,
         min: 6,
     },
+    verified: {
+        type: Boolean,
+    },
     profilePicture: {
         type: String,
-        default: "",
     },
     status: {
         type: String,
-        default: "",
     },
     house: {
         type: String,
-        default: "",
     },
     patronus: {
-        type: String,
-        default: "",
+        type: String, 
     },
-    friends: {
-        type: Array,
-        default: "",
-    },
-    cars: [{
-        car_name: {
-            type:String
-        }
+    friends: [{
+        verified: Boolean,
+        default: 0
     }],
+    chats: {
+        type: Array,
+    },
+    cars: {
+        type: Array,
+    },
 },
     { timestamps: true }
 );

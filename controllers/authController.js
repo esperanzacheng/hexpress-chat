@@ -6,19 +6,13 @@ const SECRET = config.jwtKey
 
 exports.getUser = async(req, res, next) => {
     try {
-        if (req.headers["cookie"]) {
-            const authHeader = req.headers["cookie"];
-            const token = authHeader.split("=")[1];
-            const user = jwt.verify(token, SECRET);
-            if (user) {
-                const resp = { name: user['username'], photo: user['profilePicture'], cars: user['cars']}
-                res.status(200).json(resp);
-            } else {
-                res.status(400).json("token is invalid");
-            }
+        const user = await authUser(req.headers["cookie"])
+        if (user === 401) {
+            res.status(401).json("Unauthorized");
         } else {
-            res.status(400).json("token is missing");
-        }
+            const resp = { name: user['username'], photo: user['profilePicture'], cars: user['cars']}
+            res.status(200).json(resp);
+        } 
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
@@ -37,7 +31,8 @@ exports.loginUser = async(req, res, next) => {
         const validPassword = await bcrypt.compare(req.body.password, user.password)
         !validPassword && res.status(400).json({ error: "wrong password" })
 
-        const token = jwt.sign(user.toJSON(), SECRET, { expiresIn: EXPIRES_IN });
+        const userId = { _id: user['_id'] }
+        const token = jwt.sign(userId, SECRET, { expiresIn: EXPIRES_IN });
         res.cookie('token', token, { maxAge: EXPIRES_IN, httpOnly: true}); 
         res.status(200).json({ ok: true, cars: user['cars'] });
     } catch (err) {
@@ -52,7 +47,7 @@ exports.logoutUser = async(req, res, next) => {
     const EXPIRES_IN = 0;
     try {
         res.cookie('token', "", { maxAge: EXPIRES_IN, httpOnly: true}); 
-            res.status(200).json("ok");
+        res.status(200).json("ok");
         
     } catch (err) {
         if (!err.statusCode) {
@@ -62,3 +57,34 @@ exports.logoutUser = async(req, res, next) => {
     }
 }
 
+exports.authUser = async(cookie) => {
+    if (cookie) {
+        const authHeader = cookie;
+        const token = authHeader.split("=")[1];
+        const userId = jwt.verify(token, SECRET);
+        const user = await User.findById(userId)
+        if (user) {
+            return user
+        } else {
+            return 401;
+        }
+    } else {
+        return 401;
+    }
+}
+
+async function authUser(cookie) {
+    if (cookie) {
+        const authHeader = cookie;
+        const token = authHeader.split("=")[1];
+        const userId = jwt.verify(token, SECRET);
+        const user = await User.findById(userId)
+        if (user) {
+            return user
+        } else {
+            return 401;
+        }
+    } else {
+        return 401;
+    }
+}
