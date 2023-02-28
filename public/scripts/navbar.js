@@ -1,14 +1,37 @@
-memberCenterDisplay();
-redirectToChat();
-addCar();
-fetchAllCar();
-redirectToFriend()
-
+let thisUser = authUser();
 let thisCar = window.location.href.split('/')[4].split('.')[0]
-const roomContainer = document.getElementById('room-container');
-const chatContainer = document.getElementById('chat-container');
-const AddCarForm = document.getElementById('create-car-form')
 const clickElementId = ["create-car-form-border", "add-friend-form", "home-navbar-add-friend", "create-car-form-button", "create-car-form-type-input", "create-car-form-type-label", "create-car-form-name-input", "create-car-form-name-label", "create-car-form-head", "create-car-form-border", "create-car-form" , 'create-car-button', 'navbar-member-center', 'navbar-member-center-text', 'banner-member-center-container', 'redirect-button']
+
+fetchAllCar();
+
+setTimeout(() => {
+    memberCenterDisplay();
+    redirectToChat();
+    addCar();
+    redirectToFriend();
+}, 0);
+
+async function authUser() {
+    let url = '/api/auth/user'
+    let response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        },
+    }).then((res) => { return res.json(); })
+    .then((data) => {
+        if (data['name']) {
+            const navbarUsername = document.getElementById('banner-member-center-username')
+            const navbarImg = document.getElementById('banner-member-center-img')
+            navbarUsername.textContent = data['name']
+        } else if (window.location.href != '/') {
+            window.location = '/login'
+        }
+        return data;
+    })
+    return response
+}
 
 
 function redirectToFriend() {
@@ -42,7 +65,6 @@ function logoutUser() {
 function memberCenterDisplay() {
     const memberCenterButton = document.getElementById('navbar-member-center')
     const memberCenterContainer = document.getElementById('banner-member-center-container')
-
     memberCenterButton.addEventListener('click', (e) => {
         e.preventDefault();
         memberCenterContainer.style.display = "grid"
@@ -52,7 +74,8 @@ function memberCenterDisplay() {
     window.addEventListener('click', (e) => {
         
         e.preventDefault();
-        // if (e.target.id == "create-car-form" || e.target.id == 'create-car-button' || e.target.id == 'navbar-member-center' || e.target.id == 'navbar-member-center-text' || e.target.id == 'banner-member-center-container' || e.target.id == 'redirect-button') {
+        const AddCarForm = document.getElementById('create-car-form')
+        
         if (clickElementId.includes(e.target.id)) {
             return
         } else {
@@ -94,6 +117,7 @@ function fetchAllCar() {
         },
     }).then((res) => { return res.json(); })
     .then((data) => {
+        const chatContainer = document.getElementById('chat-container');
         data.forEach(e => {
             let newCar = document.createElement('a')
             newCar.classList.add('chat-item')
@@ -115,9 +139,9 @@ function addCarLink(carItem, carId) {
 
 function addCar() {
     const showAddCarButton = document.getElementById('create-car-button')
+    const AddCarForm = document.getElementById('create-car-form')
     showAddCarButton.addEventListener('click', (e) => {
         e.preventDefault();
-        // showAddCarButton.style.display = "none";
         AddCarForm.style.display = "grid";
     })
 

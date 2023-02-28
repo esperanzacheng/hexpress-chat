@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
     },
     friends: [{
         verified: Boolean,
-        default: 0
+        sender: Boolean
     }],
     chats: {
         type: Array,

@@ -1,34 +1,10 @@
 let curPage = 0;
 let nextPage;
 let thisChat = window.location.href.split("/").pop();
-let thisUser = authUser();
 let chatsList = getUserChats();
+const roomContainer = document.getElementById('room-container');
 
 getChatMessage()
-
-async function authUser() {
-    let url = '/api/auth/user'
-    let response = await fetch(url, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json"
-        },
-    }).then((res) => { return res.json(); })
-    .then((data) => {
-        if (data['name']) {
-            const navbarUsername = document.getElementById('banner-member-center-username')
-            const navbarImg = document.getElementById('banner-member-center-img')
-            navbarUsername.textContent = data['name']
-        } else if (window.location.href != '/') {
-            window.location = '/login'
-        }
-        return data;
-    })
-    return response
-}
-
-
 
 function getChatMessage() {
     chatsList.then(async res => {

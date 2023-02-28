@@ -1,3 +1,5 @@
+const roomContainer = document.getElementById('room-container');
+
 getCompartment(thisCar)
 addCarCompartment();
 

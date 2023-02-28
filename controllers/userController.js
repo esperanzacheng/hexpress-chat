@@ -16,9 +16,9 @@ exports.getAllUser = async(req, res, next) => {
             const allUser = await User.find({ username: { $regex: new RegExp(req.params.username, 'i') } });
             const allUserName = []
             allUser.forEach(e => { 
-                allUserName.push(e['username'])
+                allUserName.push({ _id: e['_id'], username: e['username'], profilePicture: e['profilePicture'] })
             })
-            res.status(200).json(allUserName);
+            res.status(200).json({ ok: true, data: allUserName });
         }
     } catch (err) {
         if (!err.statusCode) {
@@ -123,7 +123,7 @@ exports.deleteUser = async(req, res, next) => {
         } else {
             const thisUser = await User.deleteOne({ _id: user['_id'] });
 
-            res.status(200).json('ok');
+            res.status(200).json({ ok: true });
         } 
     } catch (err) {
         if (!err.statusCode) {

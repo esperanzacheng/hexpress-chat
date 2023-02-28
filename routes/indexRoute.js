@@ -7,6 +7,7 @@ const authController = require('../controllers/authController.js')
 const messageController = require('../controllers/messageController.js')
 const chatController = require('../controllers/chatController.js')
 const compartmentController = require('../controllers/compartmentController.js')
+const friendController = require('../controllers/friendController.js')
 
 
 router.get('/', function(req, res) {
@@ -31,10 +32,15 @@ router.get('/floo/:room', (req, res) => {
   res.render('room', { title: 'Video Chat' });
 })
 
-router.get('/api/user/:username', userController.getAllUser) // or just remove it
+router.get('/api/user/:username', userController.getAllUser)
 router.post('/api/user', userController.postUser)
 router.put('/api/user', userController.putUser)
 router.delete('/api/user', userController.deleteUser)
+
+router.get('/api/friend', friendController.getFriend)
+router.post('/api/friend', friendController.postFriendRequest)
+router.put('/api/friend', friendController.putFriendRequest)
+router.delete('/api/friend', friendController.deleteFriendRequest)
 
 router.get('/api/auth/user', authController.getUser)
 router.put('/api/auth/user', authController.loginUser)
