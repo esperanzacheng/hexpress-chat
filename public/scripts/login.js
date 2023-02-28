@@ -89,7 +89,7 @@ function loginUser() {
         const vow = document.getElementById('login-vow')
 
         if (email && password && vow.checked) {
-            let url = '/api/user/auth'
+            let url = '/api/auth/user'
             fetch(url, {
                 method: "PUT",
                 headers: {

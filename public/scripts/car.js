@@ -1,61 +1,38 @@
-let thisCar = window.location.href.split('/')[4].split('.')[0]
-const roomContainer = document.getElementById('room-container');
-
-fetchAllCar();
+getCompartment(thisCar)
 addCarCompartment();
-addCar();
 
-function fetchAllCar() {
-    let url = "/api/car";
-    fetch(url, {
+async function getCompartment(carId) {
+    let url = `/api/compartment/${carId}`
+    let response = await fetch(url, {
         method: "GET",
+        credentials: "include",
         headers: {
             "Content-Type": "application/json"
         },
     }).then((res) => { return res.json(); })
     .then((data) => {
-        data.forEach(e => {
-            let newRoom = document.createElement('a')
-            newRoom.setAttribute('href', `/car/${thisCar}.${e['name']}`)
-            newRoom.classList.add('room-item')
-            let roomName = document.createElement('div')
-            roomName.textContent = e['name']
-            roomName.classList.add('room-item-name')
-            roomContainer.insertBefore(newRoom, roomContainer.firstChild)
-            newRoom.append(roomName)
-        });
-    })
-}
+        if (data['ok']) {
+            data['data'].forEach(e => {
+                const roomItem = document.createElement('div')
+                roomItem.classList.add('room-item')
+                const roomItemName = document.createElement('div')
+                roomItemName.classList.add('room-item-name')
+                if (e['type'] === true) {
+                    roomItemName.textContent = '# ' + e['name']
 
-function addCar() {
-    const showAddCarButton = document.getElementById('create-car-button')
-    const AddCarForm = document.getElementById('create-car-form')
-    showAddCarButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        // showAddCarButton.style.display = "none";
-        AddCarForm.style.display = "grid";
+                } else {
+                    roomItemName.textContent = '\u{1F508}' + e['name']
+                }
+                roomContainer.append(roomItem)
+                roomItem.append(roomItemName)
+            });
+            roomContainer.append()
+        } else if (window.location.href != '/') {
+            window.location = '/login'
+        }
+        return data;
     })
-
-
-    const addCarButton = document.getElementById('create-car-form-button')
-    
-    addCarButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        let url = "/api/car";
-        const newCarInput = document.getElementById('create-car-form-input').value
-        fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "name": newCarInput
-            })
-        }).then((res) => { return res.json(); })
-        .then((data) => {
-            console.log(data)
-        })
-    })
+    return response
 }
 
 function addCarCompartment() {
@@ -63,7 +40,6 @@ function addCarCompartment() {
     const addCompartmentForm = document.getElementById('create-compartment-form')
     showAddButton.addEventListener('click', (e) => {
         e.preventDefault();
-        console.log('should work')
         showAddButton.style.display = "none"
         addCompartmentForm.style.display = "grid"
     })

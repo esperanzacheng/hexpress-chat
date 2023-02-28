@@ -16,9 +16,9 @@ const compartmentSchema = new mongoose.Schema({
   owner_id: {
     type: String,
   },
-  message_count: {
-    type: Number,
-  },
+  // message_count: {
+  //   type: Number,
+  // },
 },
   { timestamps: true }
 )

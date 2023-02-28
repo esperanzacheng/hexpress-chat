@@ -12,9 +12,9 @@ const carSchema = new mongoose.Schema({
   members: {
     type: Array
   },
-  // members_count: {
-  //   type: Number,
-  // },
+  members_count: {
+    type: Number,
+  },
   owner_id: {
     type: String,
   },

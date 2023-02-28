@@ -19,23 +19,26 @@ router.get('/login', (req, res) => {
   res.render('login', { title: 'Login'});
 })
 
-// router.get('/chat', (req, res) => {
-//   res.render('chat', { title: 'Chat'});
-// })
 
 router.get('/car/:car.:compartment', (req, res) => {
   // console.log(req.params)
   res.render('car', { title: 'Car'});
 })
-  
-router.get('/api/user', userController.getAllUser) // or just remove it
+
+// video chat page
+router.get('/floo/:room', (req, res) => {
+  // res.render('room', { title: 'Video Chat', roomId: req.params.room });
+  res.render('room', { title: 'Video Chat' });
+})
+
+router.get('/api/user/:username', userController.getAllUser) // or just remove it
 router.post('/api/user', userController.postUser)
 router.put('/api/user', userController.putUser)
 router.delete('/api/user', userController.deleteUser)
 
-router.get('/api/user/auth', authController.getUser)
-router.put('/api/user/auth', authController.loginUser)
-router.delete('/api/user/auth', authController.logoutUser)
+router.get('/api/auth/user', authController.getUser)
+router.put('/api/auth/user', authController.loginUser)
+router.delete('/api/auth/user', authController.logoutUser)
 
 router.get('/api/cars/:car_keyword', carController.getAllCar)
 router.get('/api/car', carController.getCar)
@@ -49,7 +52,7 @@ router.post('/api/compartment', compartmentController.postCompartment)
 router.put('/api/compartment/:compartment_id', compartmentController.putCompartment)
 router.delete('/api/compartment', compartmentController.deleteCompartment)
 
-router.get('/api/chat', chatController.getChat)
+router.get('/api/chat', chatController.getChats)
 router.post('/api/chat', chatController.postChat)
 // router.put('/api/chat/:chat_id', chatController.putChat)
 router.delete('/api/chat', chatController.deleteChat)

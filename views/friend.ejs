@@ -1,0 +1,26 @@
+<%- include('./partials/setup'); %>
+        <link rel="stylesheet" href='/styles/car.css' />
+        <link rel="stylesheet" href='/styles/chat.css' />
+        <script src="/scripts/chat.js"></script>
+        <script src="/scripts/navbar.js" defer></script>
+<%- include('./partials/header'); %>
+<%- include('./partials/sidebar'); %>
+            <div id="room-container">
+                <form action="/api/chat" class="room-item">
+                    <input class="room-item-input" name="compartment" type="text" placeholder="Type Here" required>
+                    <button class="room-item-button" type="submit">Create</button>
+                </form>
+            </div>
+            <div class="friend-container">
+                <form class="friend-form" id="add-friend-form">
+                    <div id="friend-form-border" class="create-car-form-border-upper"></div>
+                    <div class="friend-form-exit" id="add-friend-form-exit">X</div>
+                    <div id="add-friend-form-head" class="friend-form-head"> Find Friend</div>
+                    <label class="friend-form-label" for="add-friend-form-name-input" id="add-friend-form-name-label" >Name:</label>
+                    <input class="friend-form-input" id="add-friend-form-name-input" name="name" type="text" placeholder="Friend's Name" required>
+                    <button class="friend-form-button" id="add-friend-form-form-button">Find</button>
+                    <div>Erin</div>
+                </form>
+            </div>
+        </div>
+<%- include('./partials/footer'); %>

@@ -6,31 +6,22 @@ const path = require("path");
 const db = require('./config/db')
 db.getConnection();
 
-// const bodyParser = require('body-parser');
-
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
-// app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 const indexRoute = require('./routes/indexRoute.js')
-const rooms = { 'test': {'users': {}} };
+const chatController = require('./controllers/chatController.js')
 
 app.use("/", indexRoute);
 
-
-// video chat page
-app.get('/floo/:room', (req, res) => {
-  res.render('room', { title: 'Video Chat', roomId: req.params.room });
-})
-
+const rooms = { };
 
 io.on('connection', (socket) => {
   // video chat control
   socket.on('join-room', (roomId, userId) => {
     socket.join(roomId);
-    console.log(`video-room: ${roomId}, video-userId: ${userId}`)
     socket.to(roomId).emit('video-user-connected', userId);
 
     socket.on('disconnect', () => {
@@ -39,46 +30,63 @@ io.on('connection', (socket) => {
   })
 
   // text chat control
-  socket.on('new-user', (room, name) => {
+  socket.on('new-user', (room, user) => {
     socket.join(room)
-    rooms[room].users[socket.id] = name
-    console.log(`text-room: ${room}, text-name: ${name}`)
-    socket.to(room).emit('user-connected', name)
+    rooms[room].users[socket.id] = user
+    socket.to(room).emit('user-connected', user)
+    // console.log(`text-new-user-object`, rooms)
   })
   socket.on('send-chat-message', (room, message) => {
-    console.log(`text-message: ${message}, text-name: ${rooms[room].users[socket.id]}`)
-    socket.to(room).emit('chat-message', { message: message, name: rooms[room].users[socket.id] })
+    // console.log(`text-message: ${message}, text-name: ${rooms[room].users[socket.id]}`)
+    let date = new Date();
+    let formattedDate = date.toLocaleString('en-US', { 
+      month: '2-digit', 
+      day: '2-digit', 
+      year: 'numeric', 
+      hour: 'numeric', 
+      minute: 'numeric', 
+      hour12: true 
+    });
+    socket.to(room).emit('chat-message', { content: message, photo: rooms[room].users[socket.id]['photo'], author: rooms[room].users[socket.id]['name'], createdAt: formattedDate})
+    // console.log(`text-send-chat-object`, rooms)
   })
   socket.on('disconnect', () => {
     getUserRooms(socket).forEach(room => {
       socket.to(room).emit('user-disconnected', rooms[room].users[socket.id])
       delete rooms[room].users[socket.id]
+      // console.log(`text-disconnect-object`, rooms)
     })
   })
 })
 
+app.get('/chat', async(req, res) => {
 
-app.get('/chat', (req, res) => {
-  // res.render('chat', { title: 'Chat', rooms: rooms, roomName: req.params.compartment});
-  res.render('chat', { title: 'Chat', rooms: rooms, roomName: 'test'});
-})
+  const thisUserChat = await chatController.getChat(req, res).then(result => {
+    return result
+  }).then((data) => {
+    return data
+  })
 
-app.post('/api/chatroom', (req, res) => {
-  if (rooms[req.body.compartment] != null) {
-    return res.redirect('/')
+  if (thisUserChat.length === 0) {
+    res.redirect(`/chat/friends`) 
+  } else {
+    res.redirect(`/chat/${thisUserChat[0]['_id']}`)
   }
-  rooms[req.body.compartment] = { users: {} }
-  res.redirect(req.body.compartment)
-  // Send message that new room was created
-  io.emit('room-created', req.body.compartment)
+
 })
 
-app.get('/chat/:compartment', (req, res) => {
-  if (rooms[req.params.compartment] == null) {
-    // return res.redirect('/')
+app.get('/chat/:chat_id', async(req, res) => {
+  if (rooms[req.params.chat_id] == null) {
+    rooms[req.params.chat_id] = { users: {} }
+  } 
+  if (req.params.chat_id === 'friends') {
+    res.render('friend', { title: 'Friends' });
+  } else {
+    res.render('chat', { title: 'Chat', roomName: req.params.chat_id});
   }
-  res.render('compartment', { title: 'Compartment', roomName: req.params.compartment })
+  
 })
+
 
 // text chat function
 function getUserRooms(socket) {
@@ -89,4 +97,3 @@ function getUserRooms(socket) {
 }
 
 server.listen(3000);
-// server.listen(3000, '0.0.0.0');

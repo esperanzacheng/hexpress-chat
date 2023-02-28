@@ -18,7 +18,8 @@ exports.getChatMessage = async(req, res, next) => {
             if ( allChatMessage[10] === undefined ) {
                 nextPage = null
             }
-            res.status(200).json({ data: allChatMessage, nextPage: nextPage });
+
+            res.status(200).json({ ok: true, data: allChatMessage, nextPage: nextPage });
         }
     } catch (err) {
         if (!err.statusCode) {

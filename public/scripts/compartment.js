@@ -1,6 +1,6 @@
 const socket = io('/');
-const messageContainer = document.getElementById('message-container');
-const roomContainer = document.getElementById('room-container');
+let messageContainer = document.getElementById('message-container');
+// const roomContainer = document.getElementById('room-container');
 const messageForm = document.getElementById('send-container');
 const messageInput = document.getElementById('message-input');
 
@@ -10,54 +10,122 @@ let thisRoom = thisUrl.split("/").pop();
 window.onload = () => {
   addVideoChat(thisRoom);  
   setUserName();
-  console.log(messageForm)
+  // scrollEvent()
 }
 
-async function setUserName(){
-  // if (messageForm != null) {
-    const name = await authUser();
-    appendMessage('You joined');
-    console.log(roomName, name)
-    socket.emit('new-user', roomName, name);
+async function scrollEvent() {
+  messageContainer.addEventListener("scroll", () => {
+      let scrollBottom = messageContainer.scrollHeight - messageContainer.clientHeight - messageContainer.scrollTop;
+      let scrolledHeight = messageContainer.offsetHeight + Math.ceil(scrollBottom);
+      let viewHeight = messageContainer.scrollHeight;
+      if (scrolledHeight >= viewHeight && nextPage != null) {
+          curPage = nextPage;
+          chatsList.then(async res => {
+            await getChatMessageById(thisChat, res, curPage)
+        })
+      }
+  })
+}
 
-    const sendButton = document.getElementById('send-button');
-    sendButton.addEventListener('click', e => {
-      e.preventDefault();
-      console.log('eeeeee')
-      const message = messageInput.value;
-      appendMessage(`You: ${message}`);
-      socket.emit('send-chat-message', roomName, message);
-      messageInput.value = '';
+
+function setUserName(){
+    thisUserName = thisUser.then((res) => {
+      // appendUserMessage('You joined');  
+      socket.emit('new-user', roomName, res);
+  
+      const sendButton = document.getElementById('send-button');
+      sendButton.addEventListener('click', e => {
+        e.preventDefault();
+        const message = messageInput.value;
+        let date = new Date();
+        let formattedDate = date.toLocaleString('en-US', { 
+          month: '2-digit', 
+          day: '2-digit', 
+          year: 'numeric', 
+          hour: 'numeric', 
+          minute: 'numeric', 
+          hour12: true 
+        });
+        appendMessage({ content: message, photo: res['photo'], author: res['name'], createdAt: formattedDate});
+        socket.emit('send-chat-message', roomName, message);
+        postMessage({'chat_id': thisRoom, 'content': message})
+        messageInput.value = '';
+      })
     })
-  // }
 }
 
 socket.on('room-created', room => {
   const roomElement = document.createElement('div');
-  roomElement.innerText = room;
+  if (room['participants'][0]['name'] === thisUserName) {
+    roomElement.innerText = room['participants'][1]['name'];
+  } else {
+    roomElement.innerText = room['participants'][0]['name'];
+  }
+
   const roomLink = document.createElement('a');
-  roomLink.href = `/${room}`;
+  roomLink.href = `/${room['_id']}`;
   roomLink.innerText = 'join';
   roomContainer.append(roomElement);
   roomContainer.append(roomLink);
 })
 
 socket.on('chat-message', data => {
-  appendMessage(`${data.name}: ${data.message}`);
+  appendMessage(data);
 })
 
-socket.on('user-connected', name => {
-  appendMessage(`${name} connected`);
-})
+// socket.on('user-connected', user => {
+//   appendUserMessage(`${user['username']} connected`);
+// })
 
-socket.on('user-disconnected', name => {
-  appendMessage(`${name} disconnected`);
-})
+// socket.on('user-disconnected', user => {
+//   appendUserMessage(`${user['username']} disconnected`);
+// })
 
-function appendMessage(message) {
+function appendMessage(message, appendType) {
   const messageElement = document.createElement('div');
-  messageElement.innerText = message;
-  messageContainer.append(messageElement);
+  messageElement.classList.add('message-single-container')
+  const messageImg = document.createElement('img');
+  messageImg.classList.add('message-single-img')
+  messageImg.setAttribute('src', message['photo'])
+  const messageName = document.createElement('div');
+  messageName.classList.add('message-single-name')
+  messageName.textContent = message['author']
+  const messageTime = document.createElement('div');
+  messageTime.classList.add('message-single-time')
+  messageTime.textContent = message['createdAt']
+  const messageDesc = document.createElement('div');
+  messageDesc.classList.add('message-single-desc')
+  messageDesc.textContent = message['content']
+  
+  // messageElement.innerText = message;
+  messageElement.append(messageImg)
+  messageElement.append(messageName)
+  messageElement.append(messageTime)
+  messageElement.append(messageDesc)
+  if (appendType === 'fetch') {
+    messageContainer.insertBefore(messageElement, messageContainer.firstChild);
+  } else {
+    messageContainer.append(messageElement);
+  }  
+}
+
+async function postMessage(message) {
+  let url = '/api/chat/message'
+  let response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(message) // message is a json object, including chat_id, message, other data
+  }).then((res) => { return res.json(); })
+  .then((data) => {
+      if (data) {
+        console.log(data)
+      } else if (window.location.href != '/') {
+          window.location = '/login'
+      }
+  })
 }
 
 function addVideoChat(room) {
@@ -66,27 +134,4 @@ function addVideoChat(room) {
     e.preventDefault();
     window.location = `/floo/${room}`;
   })
-}
-
-async function authUser() {
-  let url = '/api/user/auth'
-  let response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-          "Content-Type": "application/json"
-      },
-  }).then((res) => { return res.json(); })
-  .then((data) => {
-      if (data['name']) {
-          const navbarUsername = document.getElementById('banner-member-center-username')
-          const navbarImg = document.getElementById('banner-member-center-img')
-          navbarUsername.textContent = data['name']
-          // navbarImg.setAttribute('src', '')
-      } else if (window.location.href != '/') {
-          window.location = '/login'
-      }
-      return data;
-  })
-  return response['name']
 }

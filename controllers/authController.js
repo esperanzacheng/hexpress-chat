@@ -10,7 +10,8 @@ exports.getUser = async(req, res, next) => {
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
-            const resp = { name: user['username'], photo: user['profilePicture'], cars: user['cars']}
+            
+            const resp = { _id:user['_id'], name: user['username'], photo: user['profilePicture'], cars: user['cars']}
             res.status(200).json(resp);
         } 
     } catch (err) {

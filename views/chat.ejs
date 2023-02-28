@@ -4,34 +4,14 @@
         <script>
             const roomName = "<%= roomName %>"
         </script>
+        <script src="/scripts/chat.js"></script>
         <script src="/scripts/navbar.js" defer></script>
         <!-- <script src="https://www.thehogwartsexpress.com/socket.io/socket.io.js" defer ></script> -->
         <script src="http://localhost:3000/socket.io/socket.io.js" defer></script>
         <script src="/scripts/compartment.js" defer></script>
 <%- include('./partials/header'); %>
-        <div class="chat-container">
-            <div id="chat-container">
-                <div class="chat-item" id="direct-to-chat-button">
-                    <img id="direct-to-chat-button-img" src="/images/airplane.png"/>
-                    <div id="direct-to-chat-button-border"></div>
-                </div>
-                <a class="chat-item" id="redirect-button" href="/car/test.general">Test</a>
-                <div class="chat-item">WH</div>
-                <div class="chat-item" id="create-car-button">+
-                    <form class="create-car-form" id="create-car-form">
-                        <input class="create-car-form-input" id="create-car-form-input" name="name" type="text" placeholder="Type Here" required>
-                        <button class="create-car-form-button" id="create-car-form-button">Create</button>
-                    </form>
-                </div>
-                
-            </div>
+<%- include('./partials/sidebar'); %>
             <div id="room-container">
-                <% Object.keys(rooms).forEach(room => { %>
-                    <div class="room-item">
-                        <div class="room-item-name"><%= room %></div>
-                        <div class="room-item-link" >Join</div>
-                    </div>
-                <% }) %>
                 <form action="/api/chatroom" class="room-item">
                     <input class="room-item-input" name="compartment" type="text" placeholder="Type Here" required>
                     <button class="room-item-button" type="submit">Create</button>

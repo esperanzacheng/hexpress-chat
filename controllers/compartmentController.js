@@ -12,7 +12,7 @@ exports.getCompartment = async(req, res, next) => {
             res.status(401).json("Unauthorized");
         } else {
             const allCompartment = await Compartment.find(req.params);
-            res.status(200).json(allCompartment);
+            res.status(200).json({ ok: true, data: allCompartment});
         }
     } catch (err) {
         if (!err.statusCode) {

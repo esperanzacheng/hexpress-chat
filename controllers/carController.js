@@ -3,7 +3,8 @@ const User = require('../models/usersModel')
 const jwt = require("jsonwebtoken")
 const config = require('../config/config');
 const SECRET = config.jwtKey
-const auth = require('../controllers/authController')
+const auth = require('../controllers/authController');
+const compartmentsModel = require('../models/compartmentsModel');
 
 exports.getAllCar = async(req, res, next) => {
     try {
@@ -70,7 +71,23 @@ exports.postCar = async(req, res, next) => {
                 { new: true }
             );
 
-            res.status(200).json(thisCar);
+            const textCompartment = new compartmentsModel({
+                name: 'general',
+                type: true,
+                car_id: thisCar['_id'],
+                owner_id: user['id']
+            })
+            const thisTextCompartment = await textCompartment.save();
+
+            const voiceCompartment = new compartmentsModel({
+                name: 'general',
+                type: false,
+                car_id: thisCar['_id'],
+                owner_id: user['id']
+            })
+            const thisVoiceCompartment = await voiceCompartment.save();
+
+            res.status(200).json({ ok: true, data: { car: thisCar, text: thisTextCompartment, voice: thisVoiceCompartment } });
         }
     } catch (err) {
         if (!err.statusCode) {
@@ -113,7 +130,8 @@ exports.patchCar = async(req, res, next) => {
 
                 thisCar = await Car.findOneAndUpdate(
                     { _id: req.params.car_id }, 
-                    { $addToSet: { members: { _id: user['_id'], name: user['username']} }}, 
+                    { $addToSet: { members: { _id: user['_id'], name: user['username']} }},
+                    { $inc: {members_count: 1 }}, 
                     { new: true }
                 );
 
@@ -127,6 +145,7 @@ exports.patchCar = async(req, res, next) => {
                 thisCar = await Car.findOneAndUpdate(
                     { _id: req.params.car_id }, 
                     { $pull: { members: { _id: user['_id'] } }}, 
+                    { $inc: {members_count: -1 }}, 
                     { new: true }
                 );
 

@@ -3,12 +3,22 @@
     height: calc(100vh - 180px);
   }
   
-  #message-container {
-    /* background-color: #3B3838; */
+  /* #message-container {
+    background-color: #3B3838;
     font-family: 'MagicFont', Times, serif;
     font-size: 30px;
+    display: grid;
+  } */
+  #message-container {
+    /* display: grid; */
+    width: inherit;
+    place-items: start;
+    overflow-y: scroll;
+    height: calc(100vh - 220px);
   }
-  #message-container div {
+
+
+  /* #message-container div {
     background-color: #CCC;
     padding: 5px;
     padding-left: 20px;
@@ -16,7 +26,22 @@
   #message-container div:nth-child(2n) {
     background-color: #FFF;
     padding-left: 20px;
+  } */
+
+  .user-message {
+    background-color: #FFF;
+    width: 80%;
+    padding-left: 20px;
+    place-self: center end;
   }
+
+  .friend-message {
+    background-color: #FFF;
+    width: 80%;
+    padding-left: 20px;
+    place-self: start;
+  }
+
   #send-container {
     position: fixed;
     bottom: 90px;

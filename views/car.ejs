@@ -5,22 +5,7 @@
         <script src="http://localhost:3000/socket.io/socket.io.js" defer></script>
         <script src="/scripts/car.js" defer></script>
 <%- include('./partials/header'); %>
-        <div class="chat-container">
-            <div id="chat-container">
-                <a class="chat-item" id="direct-to-chat-button" href="/chat">
-                    <img id="direct-to-chat-button-img" src="/images/airplane.png"/>
-                    <div id="direct-to-chat-button-border"></div>
-                </a>
-                <div class="chat-item">Test</div>
-                <div class="chat-item">WH</div>
-                <div class="chat-item" id="create-car-button">+
-                    <form class="create-car-form" id="create-car-form">
-                        <input class="create-car-form-input" id="create-car-form-input" name="name" type="text" placeholder="Type Here" required>
-                        <button class="create-car-form-button" id="create-car-form-button">Create</button>
-                    </form>
-                </div>
-                
-            </div>
+<%- include('./partials/sidebar'); %>
             <div id="room-container">
                 <div class="room-item" id="create-compartment-button">
                     <div class="room-item-input" id="create-compartment-input">+</div>
@@ -30,30 +15,18 @@
                     <button class="room-item-button" type="submit" id="add-compartment-button">Create</button>
                 </form>
             </div>
-            <!-- <div id="room-container">
-                <div class="room-item">
-                    <div class="room-item-head">Create New Compartment ↓</div>
-                </div>
-                <form action="/api/car" method="POST" class="room-item">
-                    <input class="room-item-input" name="name" type="text" placeholder="Type Here" required>
-                    <button class="room-item-button" type="submit">Create</button>
-                </form>
-                <div class="room-item">
-                    <div class="room-item-head">Or ... Select to Chat ↓</div>
-                </div>
-            </div> -->
             <div id="post-container">
-                <div class="post-single-container">
-                    <img class="post-single-img" src="/images/ravenclaw.png"/>
-                    <div class="post-single-name">Erin</div>
-                    <div class="post-single-time">2023/2/11</div>
-                    <div class="post-single-desc">How are you doing?</div>
+                <div class="message-single-container">
+                    <img class="message-single-img" src="/images/ravenclaw.png"/>
+                    <div class="message-single-name">Erin</div>
+                    <div class="message-single-time">2023/2/11</div>
+                    <div class="message-single-desc">How are you doing?</div>
                 </div>
-                <div class="post-single-container">
-                    <img class="post-single-img" src="/images/ravenclaw.png"/>
-                    <div class="post-single-name">Erin</div>
-                    <div class="post-single-time">2023/2/11</div>
-                    <div class="post-single-desc">How are you doing?</div>
+                <div class="message-single-container">
+                    <img class="message-single-img" src="/images/ravenclaw.png"/>
+                    <div class="message-single-name">Erin</div>
+                    <div class="message-single-time">2023/2/11</div>
+                    <div class="message-single-desc">How are you doing?</div>
                 </div>
                 <form id="chat-send-container">
                     <input type="text" id="message-input" placeholder="Make a Post">
@@ -61,5 +34,4 @@
                 </form>
             </div>
         </div>
-        <!-- <button id="add-car-button"></button> -->
 <%- include('./partials/footer'); %>

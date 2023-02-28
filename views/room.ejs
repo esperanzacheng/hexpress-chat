@@ -1,7 +1,7 @@
 <%- include('./partials/setup'); %>
                 <link rel="stylesheet" href='/styles/room.css' />
                 <script>
-                        const ROOM_ID = "<%= roomId %>"
+                        const ROOM_ID = window.location.href.split('/')[4]
                 </script>
                 <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js" defer></script>
                 <!-- <script src="https://www.thehogwartsexpress.com/socket.io/socket.io.js" defer></script> -->

@@ -13,7 +13,7 @@ exports.getAllUser = async(req, res, next) => {
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
-            const allUser = await User.find({});
+            const allUser = await User.find({ username: { $regex: new RegExp(req.params.username, 'i') } });
             const allUserName = []
             allUser.forEach(e => { 
                 allUserName.push(e['username'])
