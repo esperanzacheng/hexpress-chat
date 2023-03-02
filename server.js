@@ -17,6 +17,13 @@ const compartmentController = require('./controllers/compartmentController.js')
 
 app.use("/", indexRoute);
 
+app.use((err, req, res, next) => {
+  if (err.status === 401) {
+    return res.redirect('/login'); // replace with the URL of the page you want to redirect to
+  }
+  next(err);
+});
+
 let rooms = { };
 
 io.on('connection', (socket) => {
@@ -36,7 +43,7 @@ io.on('connection', (socket) => {
     socket.join(room)
     rooms[room].users[socket.id] = user
     socket.to(room).emit('user-connected', user)
-    console.log(`text-new-user-object`, rooms)
+    // console.log(`text-new-user-object`, rooms)
   })
   socket.on('send-chat-message', (room, message) => {
     // console.log(`text-message: ${message}, text-name: ${rooms[room].users[socket.id]}`)
@@ -68,24 +75,21 @@ app.get('/chat', async(req, res) => {
   }).then((data) => {
     return data
   })
-
-  if (thisUserChat.length === 0) {
+  if (thisUserChat === 401) {
+    res.redirect(`/login`)
+  } else if (thisUserChat === null) {
     res.redirect(`/chat/friends`) 
   } else {
-    res.redirect(`/chat/${thisUserChat[0]['_id']}`)
+    res.redirect(`/chat/${thisUserChat}`)
   }
 
 })
 
 app.get('/chat/:chat_id', async(req, res) => {
+
   if (rooms[req.params.chat_id] == null) {
-    console.log(req.params, 'req')
     rooms[req.params.chat_id] = { users: {} }
   } 
-
-  if (req.params.chat_id === 'cloudfront stuff') {
-    console.log(req.params, 'here')
-  }
 
   if (req.params.chat_id === 'friends') {
     res.render('friend', { title: 'Friends' });
@@ -99,11 +103,11 @@ app.get('/car/:car', async(req, res) => {
 
   const thisUserCar = await compartmentController.getFirstCompartment(req, res).then(result => {
     return result
-  }).then((data) => {
-    return data
   })
 
-  if (thisUserCar.length === 0) {
+  if (thisUserCar === 401) {
+    res.redirect(`/login`) 
+  } else if (thisUserCar.length === 0) {
     res.redirect(`/chat/friends`) 
   } else {
     res.redirect(`/car/${thisUserCar['car']}/${thisUserCar['compartment']}`)
@@ -111,13 +115,22 @@ app.get('/car/:car', async(req, res) => {
 
 })
 
-app.get('/car/:car/:compartment', (req, res) => {
-  let uniqueRoom = req.params.car+req.params.compartment
-  if (rooms[uniqueRoom] == null) {
-    rooms[uniqueRoom] = { users: {} }
-  } 
+app.get('/car/:car/:compartment', async(req, res) => {
+
+  const thisCompartmentType = await compartmentController.getCompartmentType(req, res).then(result => {
+    return result
+  })
   
-  res.render('car', { title: 'Car', roomName: uniqueRoom});
+  if (thisCompartmentType == true) {
+    if (rooms[req.params.compartment] == null) {
+      rooms[req.params.compartment] = { users: {} }
+    } 
+    
+    res.render('car', { title: 'Car', roomName: req.params.compartment });
+  } else {
+    res.render('floo', { title: 'Video Chat' });
+  }
+
 })
 
 // text chat function

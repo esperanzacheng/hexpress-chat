@@ -1,14 +1,13 @@
 let curPage = 0;
 let nextPage;
 let thisChat = window.location.href.split("/").pop();
-let chatsList = getUserChats();
 let thisUrl = window.location.href;
 let thisRoom = thisUrl.split("/").pop();
-const roomContainer = document.getElementById('room-container');
-console.log(thisUrl)
+
 setTimeout(() => {
     getChatMessage()
     addVideoChat(thisRoom); 
+    setSendButton();
 }, 0);
 
 function getChatMessage() {
@@ -35,7 +34,7 @@ async function getChatMessageById(chatId, chatsList, curPage) {
     
 
     let participants = await getParticipants(chatId, chatsList)
-    let url = `/api/chat/message/${chatId}/${curPage}`
+    let url = `/api/chats/message/${chatId}/${curPage}`
     let response = await fetch(url, {
         method: "GET",
         credentials: "include",
@@ -73,47 +72,6 @@ async function getChatMessageById(chatId, chatsList, curPage) {
     return response
 }
 
-
-async function getUserChats() {
-    let url = `/api/chats`
-    let response = await fetch(url, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json"
-        },
-    }).then((res) => { return res.json(); })
-    .then((data) => {
-        if (data['ok']) {
-            
-            thisUser.then((res) => {
-                data['data'].forEach(e => {
-                    const roomItem = document.createElement('div')
-                    roomItem.classList.add('room-item')
-                    const roomItemName = document.createElement('div')
-                    roomItemName.classList.add('room-item-name')
-                    roomItemName.textContent = e['participantsInfo']['username']                    
-                    roomContainer.append(roomItem)
-                    roomItem.append(roomItemName)
-                    addChatLink(roomItem, e['_id'])
-                });
-            })
-
-        } else if (window.location.href != '/') {
-            window.location = '/login'
-        }
-        return data;
-    })
-    return response['data']
-}
-
-function addChatLink(chatItem, chatId) {
-    chatItem.addEventListener('click', (e) => {
-        e.preventDefault()
-        window.location = `/chat/${chatId}`
-    })
-}
-
 function addVideoChat(room) {
     const videoButton = document.getElementById('video-button');
     videoButton.addEventListener('click', e => {
@@ -122,3 +80,46 @@ function addVideoChat(room) {
     })
   }
   
+  function setSendButton(){
+    thisUserName = thisUser.then((res) => { 
+      socket.emit('new-user', roomName, res);
+  
+      const sendButton = document.getElementById('send-button');
+      sendButton.addEventListener('click', e => {
+        e.preventDefault();
+        const message = messageInput.value;
+        let date = new Date();
+        let formattedDate = date.toLocaleString('en-US', { 
+          month: '2-digit', 
+          day: '2-digit', 
+          year: 'numeric', 
+          hour: 'numeric', 
+          minute: 'numeric', 
+          hour12: true 
+        });
+        appendMessage({ content: message, profilePicture: res['profilePicture'], author: res['username'], createdAt: formattedDate});
+        socket.emit('send-chat-message', roomName, message);
+        postMessage({'chat_id': thisRoom, 'content': message})
+        messageInput.value = '';
+      })
+    })
+}
+
+async function postMessage(message) {
+    let url = '/api/chats/message'
+    let response = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(message) // message is a json object, including chat_id, message, other data
+    }).then((res) => { return res.json(); })
+    .then((data) => {
+        if (data['ok']) {
+          return
+        } else {
+            window.location = '/login'
+        }
+    })
+  }

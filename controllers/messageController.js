@@ -1,5 +1,3 @@
-const User = require('../models/usersModel')
-const Car = require('../models/carsModel')
 const Chat = require('../models/chatsModel')
 const Message = require('../models/messagesModel')
 const Compartment = require('../models/compartmentsModel')
@@ -110,12 +108,17 @@ exports.getCompartmentMessage = async(req, res, next) => {
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
-            const allCompartmentMessage = await Message.find({ compartment_id: req.params.compartment_id }).sort({ _id: -1 }).skip( page * 10 ).limit( 11 );
+            const page = Number(req.params.page)
+
+            let allCompartmentMessage = await Message.find({ compartment_id: req.params.compartment_id }).sort({ _id: -1 }).skip( page * 10 ).limit( 11 );
             let nextPage = page + 1
+
             if ( allCompartmentMessage[10] === undefined ) {
                 nextPage = null
+            } else {
+                allChatMessage = allChatMessage.pop()
             }
-            res.status(200).json({ data: allCompartmentMessage, nextPage: nextPage });
+            res.status(200).json({ ok: true, data: allCompartmentMessage, nextPage: nextPage });
         }
     } catch (err) {
         if (!err.statusCode) {

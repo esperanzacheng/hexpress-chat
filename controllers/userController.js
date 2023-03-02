@@ -1,9 +1,5 @@
 const User = require('../models/usersModel')
-const Car = require('../models/carsModel')
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken")
-const config = require('../config/config');
-const SECRET = config.jwtKey
 const auth = require('../controllers/authController')
 
 exports.getAllUser = async(req, res, next) => {

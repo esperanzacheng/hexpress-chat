@@ -1,8 +1,5 @@
 const Car = require('../models/carsModel')
 const User = require('../models/usersModel')
-const jwt = require("jsonwebtoken")
-const config = require('../config/config');
-const SECRET = config.jwtKey
 const auth = require('../controllers/authController');
 const Compartment = require('../models/compartmentsModel');
 
@@ -12,35 +9,10 @@ exports.getAllCar = async(req, res, next) => {
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
-            // const allCar = await User.findOne({ username: user.username })
-            // condition = []
-            // thisUser.cars.forEach(element => {
-            //     condition.push({ name: element['car_name']})
-            // });
             const keyword = req.params.car_keyword
             const allCar = await Car.find({ $or: [ { name: { $regex: new RegExp(keyword, 'i') } }, { topic: { $regex: new RegExp(keyword, 'i') }} ] });
 
-            res.status(200).json(allCar);
-        }
-
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err);
-    }
-}
-
-exports.getFirstCompartment = async(req, res, next) => {
-    try {
-        const user = await auth.authUser(req.headers["cookie"])
-        if (user === 401) {
-            res.status(401).json("Unauthorized");
-        } else {
-            const car = req.params.car
-            const firstCar = await Compartment.findOne({ car_id: car })
-            const carWithCompartment = { car: car, compartment: firstCar['_id'] }
-            return carWithCompartment;
+            res.status(200).json({ok: true, data: allCar});
         }
 
     } catch (err) {
@@ -57,12 +29,33 @@ exports.getCar = async(req, res, next) => {
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
-            // condition = []
-            // thisUser.cars.forEach(element => {
-            //     condition.push({ name: element['car_name']})
-            // });
             const allCar = user['cars'];
             res.status(200).json(allCar);
+        }
+
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
+exports.getCarMember = async(req, res, next) => {
+    try {
+        const user = await auth.authUser(req.headers["cookie"])
+        if (user === 401) {
+            res.status(401).json("Unauthorized");
+        } else {
+            let allMember = []
+            const thisCar = await Car.findById(req.params.car_id)
+            const allResult = await User.find({ _id: { $in: thisCar['members']}});
+
+            allResult.forEach(e => {
+                allMember.push({ _id: e['_id'], username: e['username'], profilePicture: e['profilePicture'] })
+            })
+
+            res.status(200).json({ ok: true, data: allMember});
         }
 
     } catch (err) {
@@ -151,7 +144,7 @@ exports.patchCar = async(req, res, next) => {
                 thisCar = await Car.findOneAndUpdate(
                     { _id: req.params.car_id }, 
                     { $addToSet: { members: { _id: user['_id'], name: user['username']} }},
-                    { $inc: {members_count: 1 }}, 
+                    // { $inc: {members_count: 1 }}, 
                     { new: true }
                 );
 
@@ -165,7 +158,7 @@ exports.patchCar = async(req, res, next) => {
                 thisCar = await Car.findOneAndUpdate(
                     { _id: req.params.car_id }, 
                     { $pull: { members: { _id: user['_id'] } }}, 
-                    { $inc: {members_count: -1 }}, 
+                    // { $inc: {members_count: -1 }}, 
                     { new: true }
                 );
 
@@ -176,7 +169,7 @@ exports.patchCar = async(req, res, next) => {
                 );
             }
 
-            res.status(200).json(thisCar);
+            res.status(200).json({ ok: true, data: thisCar});
         }
     } catch (err) {
         if (!err.statusCode) {

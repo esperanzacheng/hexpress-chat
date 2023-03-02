@@ -1,0 +1,52 @@
+<%- include('./partials/setup'); %>
+                <link rel="stylesheet" href='/styles/car.css' />                
+                <link rel="stylesheet" href='/styles/floo.css' />
+                <script>
+                        const ROOM_ID = window.location.href.split('/')[4]
+                </script>
+                <script src="/scripts/navbar.js" defer></script>
+                <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js" defer></script>
+                <!-- <script src="https://www.thehogwartsexpress.com/socket.io/socket.io.js" defer></script> -->
+                <script src="http://localhost:3000/socket.io/socket.io.js" defer></script>
+                <script src="/scripts/chatter-common.js" defer></script>
+                <script src="/scripts/floo.js" defer></script>
+<%- include('./partials/header'); %>
+<%- include('./partials/sidebar'); %>
+        <div id="room-container">
+                <div class="room-item" id="create-compartment-button">
+                        <div class="room-item-input" id="create-compartment-input">+</div>
+                </div>
+        </div>
+        <div id="video-container">
+                <section id="stream__container">
+                        <div id="stream__box"></div>
+                        <div id="video-grid"></div>
+                        <div class="video-button-container">
+                                <div id="mute-button" class="video-button-control">
+                                        <img src="/images/mic.png" />
+                                </div>
+                                <div id="camera-button" class="video-button-control">
+                                        <img src="/images/camera.png" />
+                                </div>
+                                <div id="leave-button" class="video-button-leave">
+                                        <img src="/images/phone.png" />
+                                </div>  
+                        </div>
+                </section>
+        </div>
+        <form class="create-car-form" id="create-comp-form">
+                <div id="create-comp-form-border" class="create-car-form-border-upper"></div>
+                <div class="create-car-form-exit" id="create-comp-form-exit">X</div>
+                <div id="create-comp-form-head" class="create-car-form-head"> Create New Compartment</div>
+                <label class="create-car-form-label" for="create-comp-form-name-input" id="create-car-form-name-label" >Name:</label>
+                <input class="create-car-form-input" id="create-comp-form-name-input" name="name" type="text" placeholder="Compartment Name" required>
+                <label class="create-car-form-label" for="create-comp-form-type-input" id="create-car-form-type-label">Type:</label>
+                <select class="create-car-form-input" id="create-comp-form-type-input" name="type" required>
+                    <option id="input-1" value="1">Text</option>
+                    <option id="input-0" value="0">Voice</option>
+                </select>
+                <button class="create-car-form-button" id="create-comp-form-button">Create</button>
+        </form>
+</div>
+
+<%- include('./partials/footer'); %>

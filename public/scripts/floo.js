@@ -22,8 +22,6 @@ navigator.mediaDevices.getUserMedia(constraints)
   addCameraButton(stream);
   addLeaveButton(); 
 
-  // console.log(peers, 'ha');
-
   myPeer.on('call', call => {
     call.answer(stream);
     const video = document.createElement('video');
@@ -38,11 +36,12 @@ navigator.mediaDevices.getUserMedia(constraints)
 })
 
 socket.on('user-disconnected', userId => {
-  if (peers[userId]) peers[userId].close();
+  if (peers[userId]) {
+    peers[userId].close();
+  }
 })
 
 myPeer.on('open', id => {
-  console.log(id)
   socket.emit('join-room', ROOM_ID, id);
 })
 
@@ -57,7 +56,6 @@ function connectToNewUser(userId, stream) {
   })
 
   peers[userId] = call;
-  console.log(peers[userId]['_localStream']);
 }
 
 function addVideoStream(video, stream) {
@@ -105,6 +103,6 @@ function addLeaveButton() {
   const cameraButton = document.getElementById('leave-button');
   cameraButton.addEventListener('click', (e) => {
     e.preventDefault();
-    window.location = '/chat';
+    window.history.back();
   }) 
 }

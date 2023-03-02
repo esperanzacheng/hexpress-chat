@@ -32,7 +32,7 @@ function chatButton() {
     const ticket = document.getElementById('ticket');
     ticket.addEventListener('click', e => {
         e.preventDefault();
-        window.location = "/login";
+        window.location = "/chat";
     })
 }
 

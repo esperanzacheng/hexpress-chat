@@ -1,6 +1,3 @@
-const User = require('../models/usersModel')
-const Car = require('../models/carsModel')
-const Message = require('../models/messagesModel')
 const Compartment = require('../models/compartmentsModel')
 const auth = require('./authController')
 
@@ -26,7 +23,7 @@ exports.getFirstCompartment = async(req, res, next) => {
     try {
         const user = await auth.authUser(req.headers["cookie"])
         if (user === 401) {
-            res.status(401).json("Unauthorized");
+            return 401
         } else {
             const car = req.params.car
             const firstCar = await Compartment.findOne({ car_id: car })
@@ -42,6 +39,30 @@ exports.getFirstCompartment = async(req, res, next) => {
     }
 }
 
+exports.getCompartmentType = async(req, res) => {
+    try {
+        const user = await auth.authUser(req.headers["cookie"])
+        if (user === 401) {
+            return 401
+        } else {
+            if (req.params.compartment === undefined) {
+                return
+            } else {
+                const compartment = req.params.compartment
+                const thisCompartment = await Compartment.findOne({ _id: compartment })
+                const type = thisCompartment['type']
+                return type;
+            }
+
+        }
+
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+    }
+}
+
 exports.postCompartment = async(req, res, next) => {
     try {
         const user = await auth.authUser(req.headers["cookie"])
@@ -53,7 +74,7 @@ exports.postCompartment = async(req, res, next) => {
             newCompartment['message_count'] = 0
             const thisCompartment = await newCompartment.save();
             
-            res.status(200).json(thisCompartment);
+            res.status(200).json({ ok: true, data: thisCompartment});
         }
     } catch (err) {
         if (!err.statusCode) {

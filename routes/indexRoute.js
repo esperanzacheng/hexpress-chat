@@ -14,19 +14,13 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'The Hogwarts Express' });
 });
 
-
-
 router.get('/login', (req, res) => {
   res.render('login', { title: 'Login'});
 })
 
-
-
-
 // video chat page
 router.get('/floo/:room', (req, res) => {
-  // res.render('room', { title: 'Video Chat', roomId: req.params.room });
-  res.render('room', { title: 'Video Chat' });
+  res.render('video', { title: 'Video Chat' });
 })
 
 router.get('/api/user/:username', userController.getAllUser)
@@ -43,6 +37,7 @@ router.get('/api/auth/user', authController.getUser)
 router.put('/api/auth/user', authController.loginUser)
 router.delete('/api/auth/user', authController.logoutUser)
 
+router.get('/api/car/member/:car_id', carController.getCarMember)
 router.get('/api/cars/:car_keyword', carController.getAllCar)
 router.get('/api/car', carController.getCar)
 router.post('/api/car', carController.postCar)
@@ -60,10 +55,10 @@ router.post('/api/chats', chatController.postChat)
 // router.put('/api/chat/:chat_id', chatController.putChat)
 router.delete('/api/chats', chatController.deleteChat)
 
-router.get('/api/chat/message/:chat_id/:page', messageController.getChatMessage)
-router.post('/api/chat/message', messageController.postChatMessage)
-router.put('/api/chat/message/:message_id', messageController.putChatMessage)
-router.delete('/api/chat/message', messageController.deleteChatMessage)
+router.get('/api/chats/message/:chat_id/:page', messageController.getChatMessage)
+router.post('/api/chats/message', messageController.postChatMessage)
+router.put('/api/chats/message/:message_id', messageController.putChatMessage)
+router.delete('/api/chats/message', messageController.deleteChatMessage)
 
 router.get('/api/compartment/message/:compartment_id/:page', messageController.getCompartmentMessage)
 router.post('/api/compartment/message', messageController.postCompartmentMessage)

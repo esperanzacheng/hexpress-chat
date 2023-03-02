@@ -3,9 +3,9 @@ let messageContainer = document.getElementById('message-container');
 const messageForm = document.getElementById('send-container');
 const messageInput = document.getElementById('message-input');
 
-window.onload = () => {
-  setSendButton();
-}
+// setTimeout(() => {
+//   setSendButton();
+// }, 0);
 
 async function scrollToBottom() {
   messageContainer.scrollTop = messageContainer.scrollHeight
@@ -25,46 +25,45 @@ async function scrollEvent() {
   })
 }
 
-
-function setSendButton(){
-    thisUserName = thisUser.then((res) => { 
-      socket.emit('new-user', roomName, res);
+// function setSendButton(){
+//     thisUserName = thisUser.then((res) => { 
+//       socket.emit('new-user', roomName, res);
   
-      const sendButton = document.getElementById('send-button');
-      sendButton.addEventListener('click', e => {
-        e.preventDefault();
-        const message = messageInput.value;
-        let date = new Date();
-        let formattedDate = date.toLocaleString('en-US', { 
-          month: '2-digit', 
-          day: '2-digit', 
-          year: 'numeric', 
-          hour: 'numeric', 
-          minute: 'numeric', 
-          hour12: true 
-        });
-        appendMessage({ content: message, profilePicture: res['profilePicture'], author: res['username'], createdAt: formattedDate});
-        socket.emit('send-chat-message', roomName, message);
-        postMessage({'chat_id': thisRoom, 'content': message})
-        messageInput.value = '';
-      })
-    })
-}
+//       const sendButton = document.getElementById('send-button');
+//       sendButton.addEventListener('click', e => {
+//         e.preventDefault();
+//         const message = messageInput.value;
+//         let date = new Date();
+//         let formattedDate = date.toLocaleString('en-US', { 
+//           month: '2-digit', 
+//           day: '2-digit', 
+//           year: 'numeric', 
+//           hour: 'numeric', 
+//           minute: 'numeric', 
+//           hour12: true 
+//         });
+//         appendMessage({ content: message, profilePicture: res['profilePicture'], author: res['username'], createdAt: formattedDate});
+//         socket.emit('send-chat-message', roomName, message);
+//         postMessage({'chat_id': thisRoom, 'content': message})
+//         messageInput.value = '';
+//       })
+//     })
+// }
 
-socket.on('room-created', room => {
-  const roomElement = document.createElement('div');
-  if (room['participants'][0]['username'] === thisUserName) {
-    roomElement.innerText = room['participants'][1]['username'];
-  } else {
-    roomElement.innerText = room['participants'][0]['username'];
-  }
-
-  const roomLink = document.createElement('a');
-  roomLink.href = `/${room['_id']}`;
-  roomLink.innerText = 'join';
-  roomContainer.append(roomElement);
-  roomContainer.append(roomLink);
-})
+// socket.on('room-created', room => {
+//   const roomElement = document.createElement('div');
+//   if (room['participants'][0]['username'] === thisUserName) {
+//     roomElement.innerText = room['participants'][1]['username'];
+//   } else {
+//     roomElement.innerText = room['participants'][0]['username'];
+//   }
+  
+//   const roomLink = document.createElement('a');
+//   roomLink.href = `/${room['_id']}`;
+//   roomLink.innerText = 'join';
+//   roomContainer.append(roomElement);
+//   roomContainer.append(roomLink);
+// })
 
 socket.on('chat-message', data => {
   appendMessage(data);
@@ -98,29 +97,21 @@ function appendMessage(message, appendType) {
   }  
 }
 
-async function postMessage(message) {
-  let url = '/api/chat/message'
-  let response = await fetch(url, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify(message) // message is a json object, including chat_id, message, other data
-  }).then((res) => { return res.json(); })
-  .then((data) => {
-      if (data['ok']) {
-        return
-      } else {
-          window.location = '/login'
-      }
-  })
-}
-
-// function addVideoChat(room) {
-//   const videoButton = document.getElementById('video-button');
-//   videoButton.addEventListener('click', e => {
-//     e.preventDefault();
-//     window.location = `/floo/${room}`;
+// async function postMessage(message) {
+//   let url = '/api/chats/message'
+//   let response = await fetch(url, {
+//       method: "POST",
+//       credentials: "include",
+//       headers: {
+//           "Content-Type": "application/json"
+//       },
+//       body: JSON.stringify(message) // message is a json object, including chat_id, message, other data
+//   }).then((res) => { return res.json(); })
+//   .then((data) => {
+//       if (data['ok']) {
+//         return
+//       } else {
+//           window.location = '/login'
+//       }
 //   })
 // }

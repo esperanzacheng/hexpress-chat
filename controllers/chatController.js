@@ -1,6 +1,4 @@
 const User = require('../models/usersModel')
-const Car = require('../models/carsModel')
-const Message = require('../models/messagesModel')
 const Chat = require('../models/chatsModel')
 const auth = require('./authController')
 const mongoose = require('mongoose');
@@ -10,20 +8,22 @@ exports.getChat = async(req, res, next) => {
         const user = await auth.authUser(req.headers["cookie"])
 
         if (user === 401) {
-            res.status(401).json("Unauthorized");
+            return 401
         } else {
-            let allChat = []
-            const chatList = await Chat.find({ _id: { $in: user['chats']}});
-
-            chatList.forEach(e => {
-                if (e['participants'][0]['_id'] == user['_id']) {
-                    allChat.push({ _id: e['_id'], name: e['participants'][1]['name'] })
+            let firstChatId;
+            if (user['chats'][0]) {
+                const firstChat = await Chat.find({ _id: { $in: user['chats'][0]}});
+                
+                if (firstChat == []) {
+                    firstChatId = null
                 } else {
-                    allChat.push({ _id: e['_id'], name: e['participants'][0]['name'] })
+                    firstChatId = firstChat[0]['_id'];
                 }
-            });
-            // res.status(200).json({ok: true, data: allChat});
-            return allChat;
+            } else {
+                firstChatId = null
+            }
+
+            return firstChatId;
         }
     } catch (err) {
         if (!err.statusCode) {
@@ -75,7 +75,7 @@ exports.getChats = async(req, res, next) => {
 
                     e['participantsInfo'] = e['participantsInfo'][1][0]
                 }
-                e['participantsInfo']['profilePicture'] = 'testLa'
+                // e['participantsInfo']['profilePicture'] = 'testLa'
             })
             
             res.status(200).json({ok: true, data: chatList});
