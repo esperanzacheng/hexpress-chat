@@ -14,10 +14,11 @@ exports.getFriend = async(req, res, next) => {
                 for (let j = 0; j < user['friends'].length; j++) {
                     if ( allResult[i]['_id'].toString() == user['friends'][j]['_id'].toString() ) {
                         formattedResult.push({ _id: allResult[i]['_id'], username: allResult[i]['username'], profilePicture: allResult[i]['profilePicture'], verified: user['friends'][j]['verified'], sender: user['friends'][j]['sender'] })
+                        break
                     }
                 }
             }
-
+            
             res.status(200).json({ok: true, data: formattedResult});
         } 
     } catch (err) {

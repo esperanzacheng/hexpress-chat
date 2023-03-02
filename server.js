@@ -13,10 +13,11 @@ app.use(express.json());
 
 const indexRoute = require('./routes/indexRoute.js')
 const chatController = require('./controllers/chatController.js')
+const compartmentController = require('./controllers/compartmentController.js')
 
 app.use("/", indexRoute);
 
-const rooms = { };
+let rooms = { };
 
 io.on('connection', (socket) => {
   // video chat control
@@ -31,10 +32,11 @@ io.on('connection', (socket) => {
 
   // text chat control
   socket.on('new-user', (room, user) => {
+    // console.log(user)
     socket.join(room)
     rooms[room].users[socket.id] = user
     socket.to(room).emit('user-connected', user)
-    // console.log(`text-new-user-object`, rooms)
+    console.log(`text-new-user-object`, rooms)
   })
   socket.on('send-chat-message', (room, message) => {
     // console.log(`text-message: ${message}, text-name: ${rooms[room].users[socket.id]}`)
@@ -47,7 +49,7 @@ io.on('connection', (socket) => {
       minute: 'numeric', 
       hour12: true 
     });
-    socket.to(room).emit('chat-message', { content: message, photo: rooms[room].users[socket.id]['photo'], author: rooms[room].users[socket.id]['name'], createdAt: formattedDate})
+    socket.to(room).emit('chat-message', { content: message, profilePicture: rooms[room].users[socket.id]['profilePicture'], author: rooms[room].users[socket.id]['username'], createdAt: formattedDate})
     // console.log(`text-send-chat-object`, rooms)
   })
   socket.on('disconnect', () => {
@@ -77,8 +79,14 @@ app.get('/chat', async(req, res) => {
 
 app.get('/chat/:chat_id', async(req, res) => {
   if (rooms[req.params.chat_id] == null) {
+    console.log(req.params, 'req')
     rooms[req.params.chat_id] = { users: {} }
   } 
+
+  if (req.params.chat_id === 'cloudfront stuff') {
+    console.log(req.params, 'here')
+  }
+
   if (req.params.chat_id === 'friends') {
     res.render('friend', { title: 'Friends' });
   } else {
@@ -87,6 +95,30 @@ app.get('/chat/:chat_id', async(req, res) => {
   
 })
 
+app.get('/car/:car', async(req, res) => {
+
+  const thisUserCar = await compartmentController.getFirstCompartment(req, res).then(result => {
+    return result
+  }).then((data) => {
+    return data
+  })
+
+  if (thisUserCar.length === 0) {
+    res.redirect(`/chat/friends`) 
+  } else {
+    res.redirect(`/car/${thisUserCar['car']}/${thisUserCar['compartment']}`)
+  }
+
+})
+
+app.get('/car/:car/:compartment', (req, res) => {
+  let uniqueRoom = req.params.car+req.params.compartment
+  if (rooms[uniqueRoom] == null) {
+    rooms[uniqueRoom] = { users: {} }
+  } 
+  
+  res.render('car', { title: 'Car', roomName: uniqueRoom});
+})
 
 // text chat function
 function getUserRooms(socket) {

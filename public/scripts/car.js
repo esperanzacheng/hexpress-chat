@@ -2,7 +2,7 @@ const roomContainer = document.getElementById('room-container');
 
 getCompartment(thisCar)
 addCarCompartment();
-
+console.log(thisCar)
 async function getCompartment(carId) {
     let url = `/api/compartment/${carId}`
     let response = await fetch(url, {
@@ -27,7 +27,9 @@ async function getCompartment(carId) {
                 }
                 roomContainer.append(roomItem)
                 roomItem.append(roomItemName)
+                setCompartmentLink(roomItem, thisCar, e['_id'])
             });
+            
             roomContainer.append()
         } else if (window.location.href != '/') {
             window.location = '/login'
@@ -67,7 +69,8 @@ function addCarCompartment() {
                 addCompartmentForm.style.display = "none"
 
                 let newRoom = document.createElement('a')
-                newRoom.setAttribute('href', `/car/${thisCar}.${e['name']}`)
+                setCompartmentLink(newRoom, thisCar, e['name'])
+                // newRoom.setAttribute('href', `/car/${thisCar}/${e['name']}`)
                 newRoom.classList.add('room-item')
                 let roomName = document.createElement('div')
                 roomName.textContent = e['name']
@@ -77,5 +80,12 @@ function addCarCompartment() {
 
             }
         })
+    })
+}
+
+function setCompartmentLink(element, car, compartment) {
+    element.addEventListener('click', (e) => {
+        e.preventDefault()
+        window.location = `/car/${car}/${compartment}`
     })
 }

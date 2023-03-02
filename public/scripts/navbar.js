@@ -21,10 +21,10 @@ async function authUser() {
         },
     }).then((res) => { return res.json(); })
     .then((data) => {
-        if (data['name']) {
+        if (data['username']) {
             const navbarUsername = document.getElementById('banner-member-center-username')
             const navbarImg = document.getElementById('banner-member-center-img')
-            navbarUsername.textContent = data['name']
+            navbarUsername.textContent = data['username']
         } else if (window.location.href != '/') {
             window.location = '/login'
         }
@@ -132,7 +132,7 @@ function fetchAllCar() {
 function addCarLink(carItem, carId) {
     carItem.addEventListener('click', (e) => {
         e.preventDefault()
-        window.location = `/car/${carId}.general`
+        window.location = `/car/${carId}`
     })
 }
 

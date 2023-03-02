@@ -21,10 +21,7 @@ router.get('/login', (req, res) => {
 })
 
 
-router.get('/car/:car.:compartment', (req, res) => {
-  // console.log(req.params)
-  res.render('car', { title: 'Car'});
-})
+
 
 // video chat page
 router.get('/floo/:room', (req, res) => {
@@ -58,10 +55,10 @@ router.post('/api/compartment', compartmentController.postCompartment)
 router.put('/api/compartment/:compartment_id', compartmentController.putCompartment)
 router.delete('/api/compartment', compartmentController.deleteCompartment)
 
-router.get('/api/chat', chatController.getChats)
-router.post('/api/chat', chatController.postChat)
+router.get('/api/chats', chatController.getChats)
+router.post('/api/chats', chatController.postChat)
 // router.put('/api/chat/:chat_id', chatController.putChat)
-router.delete('/api/chat', chatController.deleteChat)
+router.delete('/api/chats', chatController.deleteChat)
 
 router.get('/api/chat/message/:chat_id/:page', messageController.getChatMessage)
 router.post('/api/chat/message', messageController.postChatMessage)

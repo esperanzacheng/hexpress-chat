@@ -1,16 +1,14 @@
 const socket = io('/');
 let messageContainer = document.getElementById('message-container');
-// const roomContainer = document.getElementById('room-container');
 const messageForm = document.getElementById('send-container');
 const messageInput = document.getElementById('message-input');
 
-let thisUrl = window.location.href;
-let thisRoom = thisUrl.split("/").pop();
-
 window.onload = () => {
-  addVideoChat(thisRoom);  
-  setUserName();
-  // scrollEvent()
+  setSendButton();
+}
+
+async function scrollToBottom() {
+  messageContainer.scrollTop = messageContainer.scrollHeight
 }
 
 async function scrollEvent() {
@@ -28,9 +26,8 @@ async function scrollEvent() {
 }
 
 
-function setUserName(){
-    thisUserName = thisUser.then((res) => {
-      // appendUserMessage('You joined');  
+function setSendButton(){
+    thisUserName = thisUser.then((res) => { 
       socket.emit('new-user', roomName, res);
   
       const sendButton = document.getElementById('send-button');
@@ -46,7 +43,7 @@ function setUserName(){
           minute: 'numeric', 
           hour12: true 
         });
-        appendMessage({ content: message, photo: res['photo'], author: res['name'], createdAt: formattedDate});
+        appendMessage({ content: message, profilePicture: res['profilePicture'], author: res['username'], createdAt: formattedDate});
         socket.emit('send-chat-message', roomName, message);
         postMessage({'chat_id': thisRoom, 'content': message})
         messageInput.value = '';
@@ -56,10 +53,10 @@ function setUserName(){
 
 socket.on('room-created', room => {
   const roomElement = document.createElement('div');
-  if (room['participants'][0]['name'] === thisUserName) {
-    roomElement.innerText = room['participants'][1]['name'];
+  if (room['participants'][0]['username'] === thisUserName) {
+    roomElement.innerText = room['participants'][1]['username'];
   } else {
-    roomElement.innerText = room['participants'][0]['name'];
+    roomElement.innerText = room['participants'][0]['username'];
   }
 
   const roomLink = document.createElement('a');
@@ -72,14 +69,6 @@ socket.on('room-created', room => {
 socket.on('chat-message', data => {
   appendMessage(data);
 })
-
-// socket.on('user-connected', user => {
-//   appendUserMessage(`${user['username']} connected`);
-// })
-
-// socket.on('user-disconnected', user => {
-//   appendUserMessage(`${user['username']} disconnected`);
-// })
 
 function appendMessage(message, appendType) {
   const messageElement = document.createElement('div');
@@ -97,11 +86,11 @@ function appendMessage(message, appendType) {
   messageDesc.classList.add('message-single-desc')
   messageDesc.textContent = message['content']
   
-  // messageElement.innerText = message;
   messageElement.append(messageImg)
   messageElement.append(messageName)
   messageElement.append(messageTime)
   messageElement.append(messageDesc)
+
   if (appendType === 'fetch') {
     messageContainer.insertBefore(messageElement, messageContainer.firstChild);
   } else {
@@ -120,18 +109,18 @@ async function postMessage(message) {
       body: JSON.stringify(message) // message is a json object, including chat_id, message, other data
   }).then((res) => { return res.json(); })
   .then((data) => {
-      if (data) {
-        console.log(data)
-      } else if (window.location.href != '/') {
+      if (data['ok']) {
+        return
+      } else {
           window.location = '/login'
       }
   })
 }
 
-function addVideoChat(room) {
-  const videoButton = document.getElementById('video-button');
-  videoButton.addEventListener('click', e => {
-    e.preventDefault();
-    window.location = `/floo/${room}`;
-  })
-}
+// function addVideoChat(room) {
+//   const videoButton = document.getElementById('video-button');
+//   videoButton.addEventListener('click', e => {
+//     e.preventDefault();
+//     window.location = `/floo/${room}`;
+//   })
+// }

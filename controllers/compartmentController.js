@@ -22,6 +22,26 @@ exports.getCompartment = async(req, res, next) => {
     }
 }
 
+exports.getFirstCompartment = async(req, res, next) => {
+    try {
+        const user = await auth.authUser(req.headers["cookie"])
+        if (user === 401) {
+            res.status(401).json("Unauthorized");
+        } else {
+            const car = req.params.car
+            const firstCar = await Compartment.findOne({ car_id: car })
+            const carWithCompartment = { car: car, compartment: firstCar['_id'] }
+            return carWithCompartment;
+        }
+
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
 exports.postCompartment = async(req, res, next) => {
     try {
         const user = await auth.authUser(req.headers["cookie"])

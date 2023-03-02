@@ -3,7 +3,7 @@ const Car = require('../models/carsModel')
 const Message = require('../models/messagesModel')
 const Chat = require('../models/chatsModel')
 const auth = require('./authController')
-const { default: mongoose } = require('mongoose')
+const mongoose = require('mongoose');
 
 exports.getChat = async(req, res, next) => {
     try {
@@ -40,10 +40,14 @@ exports.getChats = async(req, res, next) => {
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
+            const allChat = []
+            user['chats'].forEach(e => {
+                allChat.push(e['_id'])
+            })
 
             const chatList = await Chat.aggregate([
                 {
-                    $match: { _id: { $in: user['chats']}}
+                    $match: { _id: { $in: allChat}}
                 },
                 {
                     $unwind: '$participants'
@@ -56,9 +60,6 @@ exports.getChats = async(req, res, next) => {
                         as: 'participantsInfo'
                     }
                 },
-                // {
-                //     $unwind: '$participantsInfo'
-                // },
                 {
                     $group: {
                       _id: '$_id',
@@ -66,14 +67,17 @@ exports.getChats = async(req, res, next) => {
                     }
                 }
             ]).sort({ _id: 1 })
+
             chatList.forEach(e => {
-                // console.log(e['participantsInfo'][0][0]['_id'], user['_id'])
-                if (e['participantsInfo'][1][0]['_id'] == user['_id']) {
+                if (e['participantsInfo'][1][0]['_id'].toString() == user['_id'].toString()) {
                     e['participantsInfo'] = e['participantsInfo'][0][0]
                 } else {
+
                     e['participantsInfo'] = e['participantsInfo'][1][0]
                 }
+                e['participantsInfo']['profilePicture'] = 'testLa'
             })
+            
             res.status(200).json({ok: true, data: chatList});
         }
     } catch (err) {
@@ -91,28 +95,29 @@ exports.postChat = async(req, res, next) => {
             res.status(401).json("Unauthorized");
         } else {
 
-            // const targetId = mongoose.Types.ObjectId(req.body.target_id)
+            const formattedId = mongoose.Types.ObjectId(req.body._id)
 
             const newChat = new Chat({ 
                 participants: [
-                    { _id: req.body.target_id, name: req.body.target_name }, 
+                    { _id: formattedId, name: req.body.target_name }, 
                     { _id: user['_id'], name: user['username'] }
                 ]})
             const thisChat = await newChat.save();
 
             const thisUser = await User.findOneAndUpdate(
                 { _id: user['_id'] },
-                { $push: { chats: thisChat['_id'] }},
+                { $push: { chats: { _id: thisChat['_id'], participants: formattedId } }},
                 { new: true }
             );
 
             const targetUser = await User.findOneAndUpdate(
-                { _id: req.body.target_id },
-                { $push: { chats: thisChat['_id'] }},
+                { _id: formattedId },
+                { $push: { chats: { _id: thisChat['_id'], participants: user['_id'] } }},
                 { new: true }
             );
-            // return thisChat
-            res.status(200).json(thisChat);
+
+            res.status(200).json({ ok: true, data: thisChat});
+
         }
     } catch (err) {
         if (!err.statusCode) {
@@ -161,7 +166,7 @@ exports.deleteChat = async(req, res, next) => {
             );
 
             const targetUser = await User.findOneAndUpdate(
-                { _id: req.body.target_id },
+                { _id: req.body._id },
                 { pull: { chats: thisChat['_id'] }},
                 { new: true }
             );

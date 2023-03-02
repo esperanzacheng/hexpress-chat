@@ -2,9 +2,14 @@ let curPage = 0;
 let nextPage;
 let thisChat = window.location.href.split("/").pop();
 let chatsList = getUserChats();
+let thisUrl = window.location.href;
+let thisRoom = thisUrl.split("/").pop();
 const roomContainer = document.getElementById('room-container');
-
-getChatMessage()
+console.log(thisUrl)
+setTimeout(() => {
+    getChatMessage()
+    addVideoChat(thisRoom); 
+}, 0);
 
 function getChatMessage() {
     chatsList.then(async res => {
@@ -13,12 +18,7 @@ function getChatMessage() {
         setTimeout(() => {
             scrollEvent()
         }, 1000);
-        
     })
-}
-
-async function scrollToBottom() {
-    messageContainer.scrollTop = messageContainer.scrollHeight
 }
 
 async function getParticipants(chatId, chatsList) {
@@ -35,7 +35,6 @@ async function getChatMessageById(chatId, chatsList, curPage) {
     
 
     let participants = await getParticipants(chatId, chatsList)
-    
     let url = `/api/chat/message/${chatId}/${curPage}`
     let response = await fetch(url, {
         method: "GET",
@@ -48,16 +47,21 @@ async function getChatMessageById(chatId, chatsList, curPage) {
         if (data['ok']) {
             thisUser.then((res) => {
                 let chats = data['data']
-                for (let i = 0; i < data['data'].length - 1; i++) {
-                    chats[i]['createdAt'] = chats[i]['createdAt'].split('T')[0] + ' ' + chats[i]['createdAt'].split('T')[1].split('.')[0]
-                    if (chats[i]['author'] == res['_id']) {
-                        chats[i]['author'] = res['name']
-                        chats[i]['photo'] = res['photo']
-                    } else {
-                        chats[i]['author'] = participants['username']                        
-                        chats[i]['photo'] = participants['profilePicture']  
+                if (chats == []) {
+                    console.log('no message yet')
+                } else {
+                    for (let i = 0; i < chats.length; i++) {
+                        chats[i]['createdAt'] = chats[i]['createdAt'].split('T')[0] + ' ' + chats[i]['createdAt'].split('T')[1].split('.')[0]
+                        if (chats[i]['author'] == res['_id']) {
+                            chats[i]['author'] = res['username']
+                            chats[i]['photo'] = res['profilePicture']
+                        } else {
+                            chats[i]['author'] = participants['username']                        
+                            chats[i]['photo'] = participants['profilePicture']  
+                        }
+    
+                        appendMessage(chats[i], 'fetch')
                     }
-                    appendMessage(chats[i], 'fetch')
                 }
             })
         } else if (window.location.href != '/') {
@@ -71,7 +75,7 @@ async function getChatMessageById(chatId, chatsList, curPage) {
 
 
 async function getUserChats() {
-    let url = `/api/chat`
+    let url = `/api/chats`
     let response = await fetch(url, {
         method: "GET",
         credentials: "include",
@@ -81,6 +85,7 @@ async function getUserChats() {
     }).then((res) => { return res.json(); })
     .then((data) => {
         if (data['ok']) {
+            
             thisUser.then((res) => {
                 data['data'].forEach(e => {
                     const roomItem = document.createElement('div')
@@ -108,3 +113,12 @@ function addChatLink(chatItem, chatId) {
         window.location = `/chat/${chatId}`
     })
 }
+
+function addVideoChat(room) {
+    const videoButton = document.getElementById('video-button');
+    videoButton.addEventListener('click', e => {
+      e.preventDefault();
+      window.location = `/floo/${room}`;
+    })
+  }
+  

@@ -62,12 +62,11 @@ function renderAllFriend() {
             data['data'].forEach(e => {
                 const resultItem = document.createElement('div')
                 renderFriendItem(resultItem, e)
-
                 if (e['verified']) {
                     const resultItemInvite = document.createElement('div')
                     resultItemInvite.classList.add('friend-result-invite')
                     resultItemInvite.textContent = 'Chat'
-                    directToFriendChat(resultItemInvite, e['_id'])
+                    directToFriendChat(resultItemInvite, e['_id'], e['username'])
                     resultItem.append(resultItemInvite)
                     allFriendTab.append(resultItem)
                 } else {
@@ -89,18 +88,39 @@ function renderAllFriend() {
     })
 }
 
-function directToFriendChat(button, friendId) {
+function directToFriendChat(button, friendId, friendName) {
     button.addEventListener('click', (e) => {
         e.preventDefault();
+
         thisUser.then((res) => {
-            if (res['friends'].includes(friendId)) {
-                console.log(friendId, 'included')
-            } else {
-                console.log(friendId, 'NOT-included')
+            for (let i = 0; i < res['chats'].length; i++) {
+                if (res['chats'][i]['participants'] == friendId) {
+                    window.location = `/chat/${res['chats'][i]['_id']}`
+                    return
+                }
             }
         })
+
+        let url = `/api/chats`
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "_id": friendId,
+                "target_name": friendName
+            })
+        }).then((res) => { return res.json(); })
+        .then((data) => {
+            if (data['ok']) {
+                window.location = `/chat/${data['data']['_id']}`
+            }
+        })
+
     })
 }
+
 
 function confirmFriend(parentItem, element, friendId) {
     element.addEventListener('click', (e) => {
@@ -117,7 +137,6 @@ function confirmFriend(parentItem, element, friendId) {
         }).then((res) => { return res.json(); })
         .then((data) => {
             if (data['ok']) {
-                console.log(data['data'])
                 pendingFriendTab.removeChild(parentItem)
 
                 const resultItem = document.createElement('div')
@@ -126,7 +145,7 @@ function confirmFriend(parentItem, element, friendId) {
                 const resultItemInvite = document.createElement('div')
                 resultItemInvite.classList.add('friend-result-invite')
                 resultItemInvite.textContent = 'Chat'
-                directToFriendChat(resultItemInvite, data['data']['_id'])
+                directToFriendChat(resultItemInvite, data['data']['_id'], data['data']['username'])
                 resultItem.append(resultItemInvite)
                 allFriendTab.append(resultItem)
             }
@@ -149,7 +168,6 @@ function cancelFriend(parentItem, element, friendId) {
             })
         }).then((res) => { return res.json(); })
         .then((data) => {
-            console.log('what')
             if (data['ok']) {
                 pendingFriendTab.removeChild(parentItem)
             }

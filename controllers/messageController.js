@@ -13,12 +13,15 @@ exports.getChatMessage = async(req, res, next) => {
             res.status(401).json("Unauthorized");
         } else {
             const page = Number(req.params.page)
-            const allChatMessage = await Message.find({ chat_id: req.params.chat_id }).sort({ _id: -1 }).skip( page * 10 ).limit( 11 );
+            let allChatMessage = await Message.find({ chat_id: req.params.chat_id }).sort({ _id: -1 }).skip( page * 10 ).limit( 11 );
             let nextPage = page + 1
+
             if ( allChatMessage[10] === undefined ) {
                 nextPage = null
+            } else {
+                allChatMessage = allChatMessage.pop()
             }
-
+            
             res.status(200).json({ ok: true, data: allChatMessage, nextPage: nextPage });
         }
     } catch (err) {
@@ -46,7 +49,7 @@ exports.postChatMessage = async(req, res, next) => {
                 { new: true }
             );
 
-            res.status(200).json(thisMessage);
+            res.status(200).json({ok: true});
 
         }
     } catch (err) {

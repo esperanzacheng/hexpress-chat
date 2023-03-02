@@ -11,7 +11,7 @@ exports.getUser = async(req, res, next) => {
             res.status(401).json("Unauthorized");
         } else {
             
-            const resp = { _id:user['_id'], name: user['username'], photo: user['profilePicture'], cars: user['cars'], friends: user['friends']}
+            const resp = { _id:user['_id'], username: user['username'], profilePicture: user['profilePicture'], cars: user['cars'], friends: user['friends'], chats:user['chats']}
             res.status(200).json(resp);
         } 
     } catch (err) {

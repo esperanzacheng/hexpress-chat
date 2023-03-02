@@ -1,9 +1,14 @@
 <%- include('./partials/setup'); %>
         <link rel="stylesheet" href='/styles/car.css' />
+        <link rel="stylesheet" href='/styles/chat.css' />
+        <script>
+            const roomName = "<%= roomName %>"
+        </script>
         <script src="/scripts/navbar.js" defer></script>
         <!-- <script src="https://www.thehogwartsexpress.com/socket.io/socket.io.js" defer ></script> -->
         <script src="http://localhost:3000/socket.io/socket.io.js" defer></script>
         <script src="/scripts/car.js" defer></script>
+        <script src="/scripts/chat-common.js" defer></script>
 <%- include('./partials/header'); %>
 <%- include('./partials/sidebar'); %>
             <div id="room-container">
@@ -15,23 +20,19 @@
                     <button class="room-item-button" type="submit" id="add-compartment-button">Create</button>
                 </form>
             </div>
-            <div id="post-container">
-                <div class="message-single-container">
-                    <img class="message-single-img" src="/images/ravenclaw.png"/>
-                    <div class="message-single-name">Erin</div>
-                    <div class="message-single-time">2023/2/11</div>
-                    <div class="message-single-desc">How are you doing?</div>
+            <div id="chat-room-container">
+                <div id="message-container">
+                    <form id="send-container">
+                        <input type="text" id="message-input" placeholder="Type to Chat">
+                        <button type="submit" id="send-button" class="send-button">Send</button>
+                    </form>
                 </div>
-                <div class="message-single-container">
-                    <img class="message-single-img" src="/images/ravenclaw.png"/>
-                    <div class="message-single-name">Erin</div>
-                    <div class="message-single-time">2023/2/11</div>
-                    <div class="message-single-desc">How are you doing?</div>
-                </div>
+            </div>
+            <!-- <div id="post-container">
                 <form id="chat-send-container">
                     <input type="text" id="message-input" placeholder="Make a Post">
                     <button type="submit" id="send-button" class="send-button">Post</button>
                 </form>
-            </div>
+            </div> -->
         </div>
 <%- include('./partials/footer'); %>

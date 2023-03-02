@@ -386,7 +386,6 @@ input:focus {
   grid-area: 3/3/5/4;
 }
 
-
 .message-single-container {
   display: grid;
   grid-template-columns: 60px 60px 200px auto;

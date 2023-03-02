@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken")
 const config = require('../config/config');
 const SECRET = config.jwtKey
 const auth = require('../controllers/authController');
-const compartmentsModel = require('../models/compartmentsModel');
+const Compartment = require('../models/compartmentsModel');
 
 exports.getAllCar = async(req, res, next) => {
     try {
@@ -21,6 +21,26 @@ exports.getAllCar = async(req, res, next) => {
             const allCar = await Car.find({ $or: [ { name: { $regex: new RegExp(keyword, 'i') } }, { topic: { $regex: new RegExp(keyword, 'i') }} ] });
 
             res.status(200).json(allCar);
+        }
+
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
+exports.getFirstCompartment = async(req, res, next) => {
+    try {
+        const user = await auth.authUser(req.headers["cookie"])
+        if (user === 401) {
+            res.status(401).json("Unauthorized");
+        } else {
+            const car = req.params.car
+            const firstCar = await Compartment.findOne({ car_id: car })
+            const carWithCompartment = { car: car, compartment: firstCar['_id'] }
+            return carWithCompartment;
         }
 
     } catch (err) {
@@ -71,7 +91,7 @@ exports.postCar = async(req, res, next) => {
                 { new: true }
             );
 
-            const textCompartment = new compartmentsModel({
+            const textCompartment = new Compartment({
                 name: 'general',
                 type: true,
                 car_id: thisCar['_id'],
@@ -79,7 +99,7 @@ exports.postCar = async(req, res, next) => {
             })
             const thisTextCompartment = await textCompartment.save();
 
-            const voiceCompartment = new compartmentsModel({
+            const voiceCompartment = new Compartment({
                 name: 'general',
                 type: false,
                 car_id: thisCar['_id'],
