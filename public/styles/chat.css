@@ -14,12 +14,41 @@
   #send-container {
     position: fixed;
     bottom: 90px;
+    left: 328px;
     background-color: white;
     width: calc(100% - 350px);
     display: grid;
-    grid-template-columns: auto 150px 80px;
+    grid-template-columns: auto 100px 150px 80px;
     font-size: 30px;
     padding-left: 20px;
+  }
+  #image-input-button{
+    background-color: #FFC53F !important;
+  }
+
+  #upload-file-name {
+    position: absolute;
+    color: #3B3838;
+    font-size: 18px;
+    right: 350px;
+    bottom: 100px;
+    width: 200%;
+    text-align: right;
+
+  }
+
+  #upload-file-name-close{
+    position: absolute;
+    right: 340px;
+    bottom: 100px;
+    color: #3B3838;
+    font-size: 18px;
+    visibility: hidden;
+    cursor: pointer;
+  }
+
+  #image-input-test {
+    display: none;
   }
 
 .video-button {
@@ -36,6 +65,7 @@
     height: 55%;
     background-color: #067D10 !important;
     color: #FFFAFA;
+    height: 22px;
   }
   .send-button {
     place-self: center;

@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
 const config = require('../config/config');
 const SECRET = config.jwtKey
+const s3 = require('../s3');
 
 exports.getUser = async(req, res, next) => {
     try {
@@ -10,8 +11,14 @@ exports.getUser = async(req, res, next) => {
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
-            
-            const resp = { _id:user['_id'], username: user['username'], profilePicture: user['profilePicture'], cars: user['cars'], friends: user['friends'], chats:user['chats']}
+            let resp;
+            if (user['profilePicture']) {
+                const photo = await s3.getObjectSignedUrl(user['profilePicture'])
+                resp = { _id:user['_id'], username: user['username'], profilePicture: photo, cars: user['cars'], friends: user['friends'], chats:user['chats']}
+            } else {
+                resp = { _id:user['_id'], username: user['username'], profilePicture: user['profilePicture'], cars: user['cars'], friends: user['friends'], chats:user['chats']}
+            }
+            // resp = { _id:user['_id'], username: user['username'], profilePicture: user['profilePicture'], cars: user['cars'], friends: user['friends'], chats:user['chats']}
             res.status(200).json(resp);
         } 
     } catch (err) {

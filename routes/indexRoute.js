@@ -1,5 +1,9 @@
 const express = require('express');
+const multer = require('multer')
 const router = express.Router();
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
 
 const carController = require('../controllers/carController.js')
 const userController = require('../controllers/userController.js')
@@ -25,7 +29,7 @@ router.get('/floo/:room', (req, res) => {
 
 router.get('/api/user/:username', userController.getAllUser)
 router.post('/api/user', userController.postUser)
-router.put('/api/user', userController.putUser)
+router.put('/api/user', upload.single('profilePicture'), userController.putUser)
 router.delete('/api/user', userController.deleteUser)
 
 router.get('/api/friend', friendController.getFriend)
@@ -56,12 +60,12 @@ router.post('/api/chats', chatController.postChat)
 router.delete('/api/chats', chatController.deleteChat)
 
 router.get('/api/chats/message/:chat_id/:page', messageController.getChatMessage)
-router.post('/api/chats/message', messageController.postChatMessage)
+router.post('/api/chats/message', upload.single('attachments'), messageController.postChatMessage)
 router.put('/api/chats/message/:message_id', messageController.putChatMessage)
 router.delete('/api/chats/message', messageController.deleteChatMessage)
 
 router.get('/api/compartment/message/:compartment_id/:page', messageController.getCompartmentMessage)
-router.post('/api/compartment/message', messageController.postCompartmentMessage)
+router.post('/api/compartment/message', upload.single('attachments'), messageController.postCompartmentMessage)
 router.put('/api/compartment/message/:message_id', messageController.putCompartmentMessage)
 router.delete('/api/compartment/message', messageController.deleteCompartmentMessage)
 

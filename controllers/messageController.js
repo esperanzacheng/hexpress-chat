@@ -2,6 +2,10 @@ const Chat = require('../models/chatsModel')
 const Message = require('../models/messagesModel')
 const Compartment = require('../models/compartmentsModel')
 const auth = require('../controllers/authController')
+const crypto = require('crypto')
+const s3 = require('../s3');
+
+const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
 
 exports.getChatMessage = async(req, res, next) => {
     try {
@@ -17,9 +21,9 @@ exports.getChatMessage = async(req, res, next) => {
             if ( allChatMessage[10] === undefined ) {
                 nextPage = null
             } else {
-                allChatMessage = allChatMessage.pop()
+                allChatMessage.pop()
             }
-            
+
             res.status(200).json({ ok: true, data: allChatMessage, nextPage: nextPage });
         }
     } catch (err) {
@@ -36,16 +40,22 @@ exports.postChatMessage = async(req, res, next) => {
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
-            const newMessage = new Message(req.body)
+            let reqBodyData = req.body
+
+            if (req.file) {
+
+                const file = req.file;
+                const imageName = generateFileName();
+                await s3.uploadFile(file.buffer, imageName, file.mimetype)
+                const postedFile = await s3.getObjectSignedUrl(imageName);
+
+                reqBodyData['attachments'] = postedFile
+            } 
+
+            const newMessage = new Message(reqBodyData)
             newMessage['author'] = user['_id']
 
             const thisMessage = await newMessage.save();
-
-            const thisChat = await Chat.findOneAndUpdate(
-                { _id: req.body.chat_id }, 
-                { $inc: { message_count: 1 }}, 
-                { new: true }
-            );
 
             res.status(200).json({ok: true});
 
@@ -134,18 +144,24 @@ exports.postCompartmentMessage = async(req, res, next) => {
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
-            const newMessage = new Message(req.body)
+            let reqBodyData = req.body
+            
+            if (req.file) {
+
+                const file = req.file;
+                const imageName = generateFileName();
+                await s3.uploadFile(file.buffer, imageName, file.mimetype)
+                const postedFile = await s3.getObjectSignedUrl(imageName);
+
+                reqBodyData['attachments'] = postedFile
+            } 
+
+            const newMessage = new Message(reqBodyData)
             newMessage['author'] = user['_id']
 
             const thisMessage = await newMessage.save();
 
-            const thisCompartment = await Compartment.findOneAndUpdate(
-                { _id: req.body.compartment_id }, 
-                { $inc: { message_count: 1 }}, 
-                { new: true }
-            );
-
-            res.status(200).json(thisMessage);
+            res.status(200).json({ok: true});
 
         }
     } catch (err) {

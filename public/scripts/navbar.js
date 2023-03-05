@@ -1,14 +1,17 @@
 let thisUser = authUser();
 let thisUserCars = getAllChatId()
-const clickElementId = ["sport", "second-hand", "school", "potion", "plant", "pet", "movie", "lifestyle", "game", "book", "beast", "art", "input-0", "input-1", "create-compartment-input", "create-compartment-button", "create-comp-form-button", "create-comp-form-type-input", "create-car-form-type-label", "create-comp-form-name-input", "create-car-form-name-label", "create-comp-form-head", "create-comp-form-border", "create-comp-form", "create-car-form-border", "add-friend-form", "home-navbar-add-friend", "create-car-form-button", "create-car-form-type-input", "create-car-form-type-label", "create-car-form-name-input", "create-car-form-name-label", "create-car-form-head", "create-car-form-border", "create-car-form" , 'create-car-button', 'navbar-member-center', 'navbar-member-center-text', 'banner-member-center-container', 'redirect-button']
-
+clickElementId = ["image-input-button", "image-input-test", "send-container", "banner-member-center-container", "navbar-member-center-text", "create-compartment-input", "navbar-member-center", "create-car-button", "create-compartment-button"]
 fetchAllCar();
+setPhotoButton()
+previewPhoto()
+changeProfile()
 
 setTimeout(() => {
     memberCenterDisplay();
     redirectToChat();
     addCar();
     redirectToFriend();
+    closeTabButton()
 }, 0);
 
 async function authUser() {
@@ -25,6 +28,7 @@ async function authUser() {
             const navbarUsername = document.getElementById('banner-member-center-username')
             const navbarImg = document.getElementById('banner-member-center-img')
             navbarUsername.textContent = data['username']
+            navbarImg.setAttribute('src', data['profilePicture'])
         } else if (window.location.href != '/') {
             window.location = '/login'
         }
@@ -71,28 +75,87 @@ function memberCenterDisplay() {
 
     })
 
-    window.addEventListener('click', (e) => {
-        
+    logoutUser()
+}
+
+function closeTabButton() {
+    const homeNavbarLogo = document.getElementById('home-navbar-logo-box')
+    const homeNavbarSearch = document.getElementById('car-search')
+    const homeNavbarBuffer = document.getElementById("home-navbar-buffer")
+    const homeNavbarItem = document.getElementById("home-navbar-item-box")
+    const homeNavbarChat = document.getElementById("navbar-chat")
+    
+    const directToChat = document.getElementById('direct-to-chat-button')
+    const chatContainer = document.getElementById('chat-container')
+    const changeProfileExit = document.getElementById('change-profile-form-exit')
+    const createCarExit = document.getElementById('create-car-form-exit')
+    const roomContainerClose = document.getElementById('room-container')
+    const footerBorder = document.getElementById('footer-border')
+    const footer = document.getElementById('footer')
+
+    addCloseTab(homeNavbarLogo)
+    addCloseTab(homeNavbarSearch)
+    addCloseTab(homeNavbarBuffer)
+    addCloseTab(homeNavbarItem)
+    addCloseTab(homeNavbarChat)
+    addCloseTab(directToChat)
+    addCloseTab(chatContainer)
+    addCloseTab(changeProfileExit)
+    addCloseTab(createCarExit)
+    addCloseTab(roomContainerClose)
+    addCloseTab(footerBorder)
+    addCloseTab(footer)
+    if (document.getElementById('chat-room-container')) {
+        addCloseTab(document.getElementById('chat-room-container'))
+    }
+
+    if (document.getElementById('member-container')) {
+        addCloseTab(document.getElementById('member-container'))
+    }
+
+    if (document.getElementById('create-comp-form-exit')) {
+        addCloseTab(document.getElementById('create-comp-form-exit'))
+    }
+
+    if (document.getElementById('all-container')) {
+        addCloseTab(document.getElementById('all-container'))
+    }
+
+    if (document.getElementById('pending-container')) {
+        addCloseTab(document.getElementById('pending-container'))
+    }
+
+    if (document.getElementById('add-container')) {
+        addCloseTab(document.getElementById('add-container'))
+    }
+}
+
+function addCloseTab(element) {
+    element.addEventListener('click', (e) => {
         e.preventDefault();
-        const AddCarForm = document.getElementById('create-car-form')
-        
+
         if (clickElementId.includes(e.target.id)) {
             return
         } else {
-            const resultContainer = document.getElementById('search-bar-result-container') 
-            while (resultContainer.firstChild) {
-                resultContainer.removeChild(resultContainer.firstChild)
-            }
 
-            memberCenterContainer.style.display = "none";
-            AddCarForm.style.display = "none";
-            if (document.getElementById("create-comp-form")) {
-                document.getElementById("create-comp-form").style.display = "none";
-            }
+        const AddCarForm = document.getElementById('create-car-form')
+        const resultContainer = document.getElementById('search-bar-result-container') 
+        const changePhotoContainer = document.getElementById('change-profile-form')
+        const memberCenterContainer = document.getElementById('banner-member-center-container')
+        while (resultContainer.firstChild) {
+            resultContainer.removeChild(resultContainer.firstChild)
         }
-    })
 
-    logoutUser()
+        memberCenterContainer.style.display = "none";
+        AddCarForm.style.display = "none";
+
+        changePhotoContainer.style.display = 'none';
+        
+        if (document.getElementById("create-comp-form")) {
+            document.getElementById("create-comp-form").style.display = "none";
+        }
+    }
+    })
 }
 
 function redirectToChat() {
@@ -289,3 +352,72 @@ function getAllChatId() {
     })
     return response
 }
+
+function setPhotoButton(){
+    const photoButton = document.getElementById('change-photo-button')
+    photoButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const editUserForm = document.getElementById('change-profile-form')
+        editUserForm.style.display = 'grid'
+    })
+}
+
+function previewPhoto() {
+    const photoInput = document.getElementById('change-profile-form-type-input');
+    const userPhoto = document.getElementById('banner-member-center-img');
+    const photoName = document.getElementById('file-name')
+
+    photoInput.addEventListener('change', (e) => {
+        e.preventDefault();
+        const newPhoto = photoInput.files[0]
+        let url = URL.createObjectURL(newPhoto)
+        userPhoto.setAttribute('src', url)
+        photoName.textContent = newPhoto.name
+        
+        const photoCloseButton = document.getElementById('file-name-close')
+        photoCloseButton.style.visibility = 'visible'
+
+        photoCloseButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            photoInput.value = '';
+            photoCloseButton.style.visibility = 'hidden'
+            photoName.textContent = ''
+
+        })
+    })
+}
+
+function changeProfile() {
+
+    const changeProfileButton = document.getElementById('change-profile-form-button')
+    changeProfileButton.addEventListener('click', (e) => {
+        const nameInput = document.getElementById('change-profile-form-name-input').value
+        const photoInput = document.getElementById('change-profile-form-type-input').files
+        let url = '/api/user'
+        const formData = new FormData();
+
+
+        if (nameInput){
+            formData.append('username', nameInput)
+        }
+        if (photoInput.length) {
+            formData.append('profilePicture', photoInput[0])
+        } 
+
+        if (!nameInput && !photoInput.length) {
+            return 
+        } else {
+            fetch(url, {
+                method: "PUT",
+                body: formData
+            }).then((res) => { return res.json(); })
+            .then((data) => {
+                if (data) {
+                    window.location.reload()
+                }
+            })
+        }
+        
+    })
+}
+

@@ -1,13 +1,13 @@
     </head>
     <body>
-        <div class="home-navbar">
+        <div class="home-navbar" id="home-navbar">
             <div class="home-navbar-logo-box" id="home-navbar-logo-box">
                 <img class="home-navbar-logo" src="/images/logo-white.png"/>
             </div>    
             <input class="home-navbar-search-bar" placeholder="Find a Car /Car Topic" id="car-search"/>
             <div class="search-bar-result-container" id="search-bar-result-container"></div>
-            <div class="home-navbar-buffer"></div>
-            <div class="home-navbar-item-box">
+            <div class="home-navbar-buffer" id="home-navbar-buffer"></div>
+            <div class="home-navbar-item-box" id="home-navbar-item-box">
                 <div id="home-navbar-add-friend" class="home-navbar-item-text">Add<br>Friends</div>
             </div>
             <div class="home-navbar-item-box" id="navbar-chat">
@@ -17,13 +17,32 @@
                 <div class="home-navbar-item-text" id="navbar-member-center-text">Member<br>Center</div>
                 <div class="banner-member-center-container" id="banner-member-center-container">
                     <div class="banner-member-center-container-text" id="banner-member-center-username">Erin</div>
-                    <div class="banner-member-center-container-img">
-                        <img id="banner-member-center-img" src="/images/ravenclaw.png" />
+                    <div id="member-img" class="banner-member-center-container-img">
+                        <img id="banner-member-center-img" />
+                    </div>
+                    <div id="banner-member-center-container-button" class="banner-member-center-container-button">
+                        <button id="change-photo-button">Edit User</button>
                     </div>
                     <div class="banner-member-center-container-button">
                         <button id="log-out-button">Log Out</button>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="create-car-form" id="change-profile-form">
+            <div id="change-profile-form-border" class="create-car-form-border-upper"></div>
+            <div class="create-car-form-exit" id="change-profile-form-exit">X</div>
+            <div id="change-profile-form-head" class="create-car-form-head">Edit User</div>
+            <label class="create-car-form-label" for="create-car-form-name-input" id="change-profile-form-name-label" >Name:</label>
+            <input class="create-car-form-input" id="change-profile-form-name-input" name="name" type="text" placeholder="New Name" />
+            <label class="create-car-form-label" for="create-car-form-type-input" id="change-profile-form-type-label">Photo:</label>
+            <input class="create-car-form-input" id="change-profile-form-type-input" name="img" type="file" accept="image/*" >
+            <!-- <button id="preview-photo-button" >Select</button> -->
+                <div id="file-name-container" class="file-name-container">
+                    <span id="file-name"></span>
+                    <span id="file-name-close">X</span>
+                </div>
+            </input>
+            <button class="create-car-form-button" id="change-profile-form-button">Save</button>
         </div>
         <div class="footer-border"></div>

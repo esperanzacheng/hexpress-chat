@@ -10,6 +10,7 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+const bodyParser = require('body-parser');
 
 const indexRoute = require('./routes/indexRoute.js')
 const chatController = require('./controllers/chatController.js')
@@ -46,19 +47,17 @@ io.on('connection', (socket) => {
     // console.log(`text-new-user-object`, rooms)
   })
   socket.on('send-chat-message', (room, message) => {
-    // console.log(`text-message: ${message}, text-name: ${rooms[room].users[socket.id]}`)
-    let date = new Date();
-    let formattedDate = date.toLocaleString('en-US', { 
-      month: '2-digit', 
-      day: '2-digit', 
-      year: 'numeric', 
-      hour: 'numeric', 
-      minute: 'numeric', 
-      hour12: true 
-    });
-    socket.to(room).emit('chat-message', { content: message, profilePicture: rooms[room].users[socket.id]['profilePicture'], author: rooms[room].users[socket.id]['username'], createdAt: formattedDate})
+    let data = { }
+    data['content'] = message.content
+    data['attachments'] = message.attachments
+    data['profilePicture'] = rooms[room].users[socket.id]['profilePicture']
+    data['author'] = rooms[room].users[socket.id]['username']
+    data['createdAt'] = message.createdAt
+
+    socket.to(room).emit('chat-message', data)
     // console.log(`text-send-chat-object`, rooms)
   })
+
   socket.on('disconnect', () => {
     getUserRooms(socket).forEach(room => {
       socket.to(room).emit('user-disconnected', rooms[room].users[socket.id])
@@ -72,9 +71,8 @@ app.get('/chat', async(req, res) => {
 
   const thisUserChat = await chatController.getChat(req, res).then(result => {
     return result
-  }).then((data) => {
-    return data
   })
+
   if (thisUserChat === 401) {
     res.redirect(`/login`)
   } else if (thisUserChat === null) {

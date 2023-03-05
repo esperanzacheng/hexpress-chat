@@ -2,6 +2,7 @@ const User = require('../models/usersModel')
 const Chat = require('../models/chatsModel')
 const auth = require('./authController')
 const mongoose = require('mongoose');
+const s3 = require('../s3');
 
 exports.getChat = async(req, res, next) => {
     try {
@@ -11,6 +12,7 @@ exports.getChat = async(req, res, next) => {
             return 401
         } else {
             let firstChatId;
+
             if (user['chats'][0]) {
                 const firstChat = await Chat.find({ _id: { $in: user['chats'][0]}});
                 
@@ -68,15 +70,24 @@ exports.getChats = async(req, res, next) => {
                 }
             ]).sort({ _id: 1 })
 
-            chatList.forEach(e => {
-                if (e['participantsInfo'][1][0]['_id'].toString() == user['_id'].toString()) {
-                    e['participantsInfo'] = e['participantsInfo'][0][0]
+            for ( let i = 0; i < chatList.length; i++ ) {
+                if (chatList[i]['participantsInfo'][1][0]['_id'].toString() == user['_id'].toString()) {
+                    chatList[i]['participantsInfo'] = chatList[i]['participantsInfo'][0][0]
                 } else {
-
-                    e['participantsInfo'] = e['participantsInfo'][1][0]
+                    chatList[i]['participantsInfo'] = chatList[i]['participantsInfo'][1][0]
                 }
-                // e['participantsInfo']['profilePicture'] = 'testLa'
-            })
+                chatList[i]['participantsInfo']['profilePicture'] = await s3.getObjectSignedUrl(chatList[i]['participantsInfo']['profilePicture'])
+            }
+            // chatList.forEach(e => {
+            //     if (e['participantsInfo'][1][0]['_id'].toString() == user['_id'].toString()) {
+            //         e['participantsInfo'] = e['participantsInfo'][0][0]
+            //     } else {
+
+            //         e['participantsInfo'] = e['participantsInfo'][1][0]
+            //     }
+            //     // e['participantsInfo']['profilePicture'] = 'testLa'
+            //     console.log(e['participantsInfo'])
+            // })
             
             res.status(200).json({ok: true, data: chatList});
         }

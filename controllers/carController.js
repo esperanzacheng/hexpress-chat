@@ -2,6 +2,7 @@ const Car = require('../models/carsModel')
 const User = require('../models/usersModel')
 const auth = require('../controllers/authController');
 const Compartment = require('../models/compartmentsModel');
+const s3 = require('../s3');
 
 exports.getAllCar = async(req, res, next) => {
     try {
@@ -51,9 +52,13 @@ exports.getCarMember = async(req, res, next) => {
             const thisCar = await Car.findById(req.params.car_id)
             const allResult = await User.find({ _id: { $in: thisCar['members']}});
 
-            allResult.forEach(e => {
-                allMember.push({ _id: e['_id'], username: e['username'], profilePicture: e['profilePicture'] })
-            })
+            for ( let i = 0; i < allResult.length; i++ ) {
+                allResult[i]['profilePicture'] = await s3.getObjectSignedUrl(allResult[i]['profilePicture'])
+                allMember.push({ _id: allResult[i]['_id'], username: allResult[i]['username'], profilePicture: allResult[i]['profilePicture'] })
+            }
+            // allResult.forEach(e => {
+            //     allMember.push({ _id: e['_id'], username: e['username'], profilePicture: e['profilePicture'] })
+            // })
 
             res.status(200).json({ ok: true, data: allMember});
         }

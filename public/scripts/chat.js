@@ -4,20 +4,21 @@ let thisChat = window.location.href.split("/").pop();
 let thisUrl = window.location.href;
 let thisRoom = thisUrl.split("/").pop();
 
-setTimeout(() => {
-    getChatMessage()
-    addVideoChat(thisRoom); 
-    setSendButton();
-}, 0);
+renderChatMessage()
+addVideoChat(thisRoom); 
+setSendButton('chat_id', thisRoom, 'chats');
+setUploadButton()
+previewPhotoName()
 
-function getChatMessage() {
-    chatsList.then(async res => {
-        await getChatMessageById(thisChat, res, curPage)
-        await scrollToBottom()
-        setTimeout(() => {
-            scrollEvent()
-        }, 1000);
+function renderChatMessage() {
+    chatsList.then(res => {
+        getChatMessageById(thisChat, res, curPage)
     })
+
+    setTimeout(() => {
+        scrollToBottom()
+        scrollEvent()
+    }, 1000);
 }
 
 async function getParticipants(chatId, chatsList) {
@@ -29,9 +30,7 @@ async function getParticipants(chatId, chatsList) {
     return null
 }
 
-
 async function getChatMessageById(chatId, chatsList, curPage) {
-    
 
     let participants = await getParticipants(chatId, chatsList)
     let url = `/api/chats/message/${chatId}/${curPage}`
@@ -45,18 +44,18 @@ async function getChatMessageById(chatId, chatsList, curPage) {
     .then((data) => {
         if (data['ok']) {
             thisUser.then((res) => {
-                let chats = data['data']
-                if (chats == []) {
+                let messages = data['data']
+                if (messages == []) {
                     console.log('no message yet')
                 } else {
-                    for (let i = 0; i < chats.length; i++) {
-                        chats[i]['createdAt'] = chats[i]['createdAt'].split('T')[0] + ' ' + chats[i]['createdAt'].split('T')[1].split('.')[0]
-                        if (chats[i]['author'] == res['_id']) {
-                            chats[i]['author'] = res['username']
-                            chats[i]['photo'] = res['profilePicture']
+                    for (let i = 0; i < messages.length; i++) {
+                        messages[i]['createdAt'] = messages[i]['createdAt'].split('T')[0] + ' ' + messages[i]['createdAt'].split('T')[1].split('.')[0]
+                        if (messages[i]['author'] == res['_id']) {
+                            messages[i]['author'] = res['username']
+                            messages[i]['profilePicture'] = res['profilePicture']
                         } else {
-                            chats[i]['author'] = participants['username']                        
-                            chats[i]['photo'] = participants['profilePicture']  
+                            messages[i]['author'] = participants['username']                        
+                            messages[i]['profilePicture'] = participants['profilePicture']  
                         }
     
                         appendMessage(chats[i], 'fetch')
@@ -72,54 +71,25 @@ async function getChatMessageById(chatId, chatsList, curPage) {
     return response
 }
 
+async function scrollEvent() {
+    messageContainer.addEventListener("scroll", () => {
+        let scrollBottom = messageContainer.scrollHeight - messageContainer.clientHeight - messageContainer.scrollTop;
+        let scrolledHeight = messageContainer.offsetHeight + Math.ceil(scrollBottom);
+        let viewHeight = messageContainer.scrollHeight;
+  
+        if (scrolledHeight >= viewHeight && nextPage != null) {
+            curPage = nextPage;
+            chatsList.then(async res => {
+              await getChatMessageById(thisChat, res, curPage)
+          })
+        }
+    })
+  }
+
 function addVideoChat(room) {
     const videoButton = document.getElementById('video-button');
     videoButton.addEventListener('click', e => {
       e.preventDefault();
       window.location = `/floo/${room}`;
-    })
-  }
-  
-  function setSendButton(){
-    thisUserName = thisUser.then((res) => { 
-      socket.emit('new-user', roomName, res);
-  
-      const sendButton = document.getElementById('send-button');
-      sendButton.addEventListener('click', e => {
-        e.preventDefault();
-        const message = messageInput.value;
-        let date = new Date();
-        let formattedDate = date.toLocaleString('en-US', { 
-          month: '2-digit', 
-          day: '2-digit', 
-          year: 'numeric', 
-          hour: 'numeric', 
-          minute: 'numeric', 
-          hour12: true 
-        });
-        appendMessage({ content: message, profilePicture: res['profilePicture'], author: res['username'], createdAt: formattedDate});
-        socket.emit('send-chat-message', roomName, message);
-        postMessage({'chat_id': thisRoom, 'content': message})
-        messageInput.value = '';
-      })
-    })
-}
-
-async function postMessage(message) {
-    let url = '/api/chats/message'
-    let response = await fetch(url, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(message) // message is a json object, including chat_id, message, other data
-    }).then((res) => { return res.json(); })
-    .then((data) => {
-        if (data['ok']) {
-          return
-        } else {
-            window.location = '/login'
-        }
     })
   }
