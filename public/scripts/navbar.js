@@ -5,6 +5,8 @@ fetchAllCar();
 setPhotoButton()
 previewPhoto()
 changeProfile()
+setCarSearch()
+FriendAlert()
 
 setTimeout(() => {
     memberCenterDisplay();
@@ -247,11 +249,9 @@ function addCar() {
         AddCarForm.style.display = "none";
     })
 }
-setCarSearch()
+
 function setCarSearch() {
     const carInput = document.getElementById('car-search')
-
-
 
     carInput.addEventListener('keyup', (e) => {
         let keyword = carInput.value
@@ -421,3 +421,14 @@ function changeProfile() {
     })
 }
 
+function FriendAlert() {
+    thisUser.then((res) => {
+        for ( let i = 0; i < res['friends'].length; i++) {
+            if ( !res['friends'][i]['verified'] && !res['friends'][i]['sender']) {
+                const friendAlert = document.getElementById('friend-alert')
+                friendAlert.style.display = 'block'
+                break
+            }
+        }
+    })
+}

@@ -33,13 +33,17 @@ function switchTab() {
     showTab(addFriendButton, addFriendTab)
 }
 
-function renderFriendItem(itemElement, srcElement) {
+function renderFriendItem(itemElement, srcElement, renderType) {
     itemElement.classList.add('friend-result-item')
     const resultItemPhotoBox = document.createElement('div')
     resultItemPhotoBox.classList.add('friend-result-photo-box')
     const resultItemPhoto = document.createElement('img')
     resultItemPhoto.classList.add('friend-result-photo')
-    resultItemPhoto.setAttribute('src', srcElement['profilePicture'])
+    if (renderType === 'fetch') {
+        resultItemPhoto.setAttribute('src', srcElement['profilePicture'])
+    } else {
+        resultItemPhoto.setAttribute('src', 'https://d2wihgnacqy3wz.cloudfront.net/' + srcElement['profilePicture'])
+    }
     const resultItemName = document.createElement('div')
     resultItemName.classList.add('friend-result-name')
     resultItemName.textContent = srcElement['username']
@@ -59,9 +63,10 @@ function renderAllFriend() {
     }).then((res) => { return res.json(); })
     .then((data) => {
         if (data['ok']) {
+            let isPending = false
             data['data'].forEach(e => {
                 const resultItem = document.createElement('div')
-                renderFriendItem(resultItem, e)
+                renderFriendItem(resultItem, e, 'fetch')
                 if (e['verified']) {
                     const resultItemInvite = document.createElement('div')
                     resultItemInvite.classList.add('friend-result-invite')
@@ -76,12 +81,18 @@ function renderAllFriend() {
                         resultItemInvite.textContent = 'Cancel'
                         cancelFriend(resultItem, resultItemInvite, e['_id'])
                     } else {
+                        isPending = true
                         resultItemInvite.classList.add('friend-result-accept')
                         resultItemInvite.textContent = 'Accept'
                         confirmFriend(resultItem, resultItemInvite, e['_id'])
                     }
                     resultItem.append(resultItemInvite)
                     pendingFriendTab.append(resultItem)
+                }
+
+                if (isPending) {
+                    const pendingAlert = document.getElementById('friend-pending-alert')
+                    pendingAlert.style.display = 'block'
                 }
             })
         }
@@ -206,7 +217,7 @@ function addFriend() {
                     
                     data['data'].forEach(e => {
                         const resultItem = document.createElement('div')
-                        renderFriendItem(resultItem, e)
+                        renderFriendItem(resultItem, e, 'fetch')
 
                         const resultItemInvite = document.createElement('div')
                         resultItemInvite.classList.add('friend-result-invite')

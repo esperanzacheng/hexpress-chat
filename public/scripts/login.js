@@ -86,9 +86,8 @@ function loginUser() {
         clearLoginAlert();
         const email = document.getElementById('login-email').value
         const password = document.getElementById('login-password').value
-        const vow = document.getElementById('login-vow')
 
-        if (email && password && vow.checked) {
+        if (email && password) {
             let url = '/api/auth/user'
             fetch(url, {
                 method: "PUT",
@@ -116,9 +115,6 @@ function loginUser() {
             }
             if (!password) {
                 loginPasswordNotFilled.style.display = "block"
-            }
-            if (!vow.checked) {
-                loginVow.style.display = "block"
             }
         }
     })

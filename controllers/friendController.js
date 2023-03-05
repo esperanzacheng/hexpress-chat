@@ -1,5 +1,6 @@
 const User = require('../models/usersModel')
 const auth = require('../controllers/authController')
+const s3 = require('../s3');
 
 exports.getFriend = async(req, res, next) => {
     try {
@@ -13,7 +14,13 @@ exports.getFriend = async(req, res, next) => {
             for (let i = 0; i < allResult.length; i++) {
                 for (let j = 0; j < user['friends'].length; j++) {
                     if ( allResult[i]['_id'].toString() == user['friends'][j]['_id'].toString() ) {
-                        formattedResult.push({ _id: allResult[i]['_id'], username: allResult[i]['username'], profilePicture: allResult[i]['profilePicture'], verified: user['friends'][j]['verified'], sender: user['friends'][j]['sender'] })
+                        let friendship = { }
+                        friendship['_id'] = allResult[i]['_id']
+                        friendship['username'] = allResult[i]['username']
+                        friendship['profilePicture'] = await s3.getObjectSignedUrl(allResult[i]['profilePicture'])
+                        friendship['verified'] = user['friends'][j]['verified']
+                        friendship['sender'] = user['friends'][j]['sender']
+                        formattedResult.push(friendship)
                         break
                     }
                 }

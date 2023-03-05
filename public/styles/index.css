@@ -139,6 +139,21 @@ input:focus {
   font-weight: 900;
 }
 
+#home-navbar-add-friend {
+  position: relative;
+}
+
+#friend-alert {
+  position: absolute;
+  top: 95%;
+  right: 35%;
+  background-color: #FFC53F;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: none;
+}
+
 .ticket-container {
   display: grid;
   height: calc(100vh - 180px);
@@ -250,6 +265,7 @@ input:focus {
   border: 2px solid #272525;
   background-color: #FFFFFF;
   width: 60%;
+  height: 100%;
   cursor: pointer;
   z-index: 10;
 }

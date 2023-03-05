@@ -58,7 +58,7 @@ async function getChatMessageById(chatId, chatsList, curPage) {
                             messages[i]['profilePicture'] = participants['profilePicture']  
                         }
     
-                        appendMessage(chats[i], 'fetch')
+                        appendMessage(messages[i], 'fetch')
                     }
                 }
             })

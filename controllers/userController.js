@@ -15,10 +15,27 @@ exports.getAllUser = async(req, res, next) => {
             res.status(401).json("Unauthorized");
         } else {
             const allUser = await User.find({ username: { $regex: new RegExp(req.params.username, 'i') } });
-            const allUserName = []
-            allUser.forEach(e => { 
-                allUserName.push({ _id: e['_id'], username: e['username'], profilePicture: e['profilePicture'] })
+            let allUserName = []
+            let friended = []
+            user['friends'].forEach(e => {
+                friended.push(e['_id'].toString())
             })
+            
+            for ( let i = 0; i < allUser.length; i++ ) {
+                
+                if (allUser[i]['_id'].toString() == user['_id'].toString()) {
+                    continue
+                } else if (friended.includes(allUser[i]['_id'].toString())) {
+                    continue
+                } else {
+                    let thisUser = { }
+                    thisUser['_id'] = allUser[i]['_id']
+                    thisUser['username'] = allUser[i]['username']
+                    thisUser['profilePicture'] = await s3.getObjectSignedUrl(allUser[i]['profilePicture'])
+                    allUserName.push(thisUser)
+                }
+            }
+
             res.status(200).json({ ok: true, data: allUserName });
         }
     } catch (err) {
@@ -45,7 +62,7 @@ exports.postUser = async(req, res, next) => {
                 username: req.body.username,
                 email: req.body.email,
                 password: hashedPassword,
-                profilePicture: "https://d2wihgnacqy3wz.cloudfront.net/cbc343cb14b812cfd32e60f3cbc4342825f01ec35b2ab097928fe318a1370ec3"
+                profilePicture: "5bce901229ea2f9f84190b1ed3d2799119a8f2c01433436e37f2bb77af0654c5"
               });
             const thisUser = await newUser.save();
     

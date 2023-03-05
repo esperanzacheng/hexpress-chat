@@ -64,15 +64,18 @@
     height: 80%;
     width: 80%;
     margin-left: 10px;
+    display: grid;
+    place-self: center;
+    z-index: 10;
 }
 
 .friend-result-photo {
-    object-fit: contain;
-    max-height: 44px;
-    max-width: 44px;
+    object-fit: cover;
+    max-height: 100%;
+    max-width: 100%;
     display: grid;
     place-self: center;
-    margin-left: 10px;
+    border-radius: 50%;
 }
 
 .friend-result-name {
@@ -144,6 +147,18 @@
     display: grid;
     place-items: center start;
     padding-left: 20px;
+    position: relative;
+}
+
+.friend-room-item-alert {
+    position: absolute;
+    top: 45%;
+    right: 20px;
+    background-color: #FFC53F;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    display: none;
 }
 
 #friend-all {
