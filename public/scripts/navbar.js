@@ -41,7 +41,7 @@ async function authUser() {
 
 
 function redirectToFriend() {
-    const showAddFriendButton = document.getElementById('home-navbar-add-friend')
+    const showAddFriendButton = document.getElementById('home-navbar-item-box')
     showAddFriendButton.addEventListener('click', (e) => {
         e.preventDefault();
         window.location = '/chat/friends'

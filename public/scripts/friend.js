@@ -104,31 +104,33 @@ function directToFriendChat(button, friendId, friendName) {
         e.preventDefault();
 
         thisUser.then((res) => {
+            let isChatted = false
             for (let i = 0; i < res['chats'].length; i++) {
                 if (res['chats'][i]['participants'] == friendId) {
+                    isChatted = true
                     window.location = `/chat/${res['chats'][i]['_id']}`
-                    return
-                }
+                    break
+                } 
+            }
+            if ( !isChatted ) {
+                let url = `/api/chats`
+                fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "_id": friendId,
+                        "target_name": friendName
+                    })
+                }).then((res) => { return res.json(); })
+                .then((data) => {
+                    if (data['ok']) {
+                        window.location = `/chat/${data['data']['_id']}`
+                    }
+                })
             }
         })
-
-        let url = `/api/chats`
-        fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "_id": friendId,
-                "target_name": friendName
-            })
-        }).then((res) => { return res.json(); })
-        .then((data) => {
-            if (data['ok']) {
-                window.location = `/chat/${data['data']['_id']}`
-            }
-        })
-
     })
 }
 
