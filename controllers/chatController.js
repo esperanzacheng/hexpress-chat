@@ -35,6 +35,32 @@ exports.getChat = async(req, res, next) => {
     }
 }
 
+exports.verifyChats = async(req, res, next) => {
+    try {
+        const user = await auth.authUser(req.headers["cookie"])
+
+        if (user === 401) {
+            return 401;
+        } else {
+            const allChat = []
+            user['chats'].forEach(e => {
+                allChat.push(e['_id'].toString())
+            })
+
+            if (allChat.includes(req.params.chat_id)) {
+                return 200;
+            } else {
+                return { err: 403, chat_id: allChat[0]}
+            }
+        }
+    } catch (err) {
+        if (!err.statusCode) { 
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
 exports.getChats = async(req, res, next) => {
     try {
         const user = await auth.authUser(req.headers["cookie"])
@@ -78,16 +104,6 @@ exports.getChats = async(req, res, next) => {
                 }
                 chatList[i]['participantsInfo']['profilePicture'] = await s3.getObjectSignedUrl(chatList[i]['participantsInfo']['profilePicture'])
             }
-            // chatList.forEach(e => {
-            //     if (e['participantsInfo'][1][0]['_id'].toString() == user['_id'].toString()) {
-            //         e['participantsInfo'] = e['participantsInfo'][0][0]
-            //     } else {
-
-            //         e['participantsInfo'] = e['participantsInfo'][1][0]
-            //     }
-            //     // e['participantsInfo']['profilePicture'] = 'testLa'
-            //     console.log(e['participantsInfo'])
-            // })
             
             res.status(200).json({ok: true, data: chatList});
         }

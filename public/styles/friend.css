@@ -5,11 +5,11 @@
 
 .add-container{
     grid-template-rows: 59px auto;
-    display: none;
+    display: grid;
 }
 
 #all-container {
-    display: grid;
+    display: none;
 
 }
 
@@ -161,6 +161,19 @@
     display: none;
 }
 
-#friend-all {
+#friend-add {
     background-color: #932020;
 }
+
+/* #friend-add {
+    position: relative;
+}
+
+#no-friend-slogan {
+    font-size: 32px;
+    position: absolute;
+    left: 270px;
+    top: 130px;
+    width: 200%;
+    display: none;
+} */

@@ -26,9 +26,22 @@ exports.getFirstCompartment = async(req, res, next) => {
             return 401
         } else {
             const car = req.params.car
-            const firstCar = await Compartment.findOne({ car_id: car })
-            const carWithCompartment = { car: car, compartment: firstCar['_id'] }
-            return carWithCompartment;
+            let thisUserCars = []
+            user['cars'].forEach(e => {
+                thisUserCars.push(e['_id'].toString())
+            })
+            if (thisUserCars.includes(car)) {
+                const firstCar = await Compartment.findOne({ car_id: car })
+                const carWithCompartment = { car: car, compartment: firstCar['_id'] }
+                return carWithCompartment;
+
+            } else if (thisUserCars.length === 0) {
+                return { err: 403, data: null }
+            } else {
+                const firstCar = await Compartment.findOne({ car_id: thisUserCars[0] })
+                const carWithCompartment = { car: thisUserCars[0], compartment: firstCar['_id'] }
+                return { err: 403, data: carWithCompartment }
+            }
         }
 
     } catch (err) {
@@ -45,15 +58,29 @@ exports.getCompartmentType = async(req, res) => {
         if (user === 401) {
             return 401
         } else {
-            if (req.params.compartment === undefined) {
-                return
-            } else {
+            const car = req.params.car
+            let thisUserCars = []
+            user['cars'].forEach(e => {
+                thisUserCars.push(e['_id'].toString())
+            })
+            if (thisUserCars.includes(car)) {
                 const compartment = req.params.compartment
-                const thisCompartment = await Compartment.findOne({ _id: compartment })
-                const type = thisCompartment['type']
-                return type;
+                const allCompartment = await Compartment.find({ car_id: req.params.car })
+                let allCompartmentId = []
+                allCompartment.forEach(e => {
+                    allCompartmentId.push(e['_id'].toString())
+                })
+                if (compartment === undefined || !allCompartmentId.includes(compartment)) {
+                    const firstCompartment = await Compartment.findOne({ car_id: req.params.car })
+                    return { ok: false, _id: firstCompartment['_id'] }
+                } else {
+                    const thisCompartment = await Compartment.findOne({ _id: compartment })
+                    const type = thisCompartment['type']
+                    return { ok: true, data: type };
+                }
+            } else {
+                return null
             }
-
         }
 
     } catch (err) {

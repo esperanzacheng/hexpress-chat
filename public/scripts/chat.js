@@ -18,7 +18,7 @@ function renderChatMessage() {
     setTimeout(() => {
         scrollToBottom()
         scrollEvent()
-    }, 1000);
+    }, 1500);
 }
 
 async function getParticipants(chatId, chatsList) {

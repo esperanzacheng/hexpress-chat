@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
 })
 
 app.get('/chat', async(req, res) => {
-
+  
   const thisUserChat = await chatController.getChat(req, res).then(result => {
     return result
   })
@@ -85,16 +85,25 @@ app.get('/chat', async(req, res) => {
 
 app.get('/chat/:chat_id', async(req, res) => {
 
-  if (rooms[req.params.chat_id] == null) {
-    rooms[req.params.chat_id] = { users: {} }
-  } 
+  const verifiedChat = await chatController.verifyChats(req, res).then(result => {
+    return result
+  })
 
-  if (req.params.chat_id === 'friends') {
-    res.render('friend', { title: 'Friends' });
+  if (verifiedChat === 401) {
+    res.redirect(`/login`)
+  } else if (verifiedChat['err'] === 403) {
+    if (verifiedChat['chat_id'] === undefined || req.params.chat_id === 'friends') {
+      res.render('friend', { title: 'Friends' });
+    } else {
+      res.redirect(`/chat/${verifiedChat['chat_id']}`)
+    }
   } else {
-    res.render('chat', { title: 'Chat', roomName: req.params.chat_id});
+    if (rooms[req.params.chat_id] == null) {
+      rooms[req.params.chat_id] = { users: {} }
+    } 
+
+      res.render('chat', { title: 'Chat', roomName: req.params.chat_id});
   }
-  
 })
 
 app.get('/car/:car', async(req, res) => {
@@ -105,8 +114,12 @@ app.get('/car/:car', async(req, res) => {
 
   if (thisUserCar === 401) {
     res.redirect(`/login`) 
-  } else if (thisUserCar.length === 0) {
-    res.redirect(`/chat/friends`) 
+  } else if (thisUserCar['err'] === 403) {
+    if (thisUserCar['data'] === null) {
+      res.redirect(`/chat`) 
+    } else {
+      res.redirect(`/car/${thisUserCar['data']['car']}/${thisUserCar['data']['compartment']}`)
+    }
   } else {
     res.redirect(`/car/${thisUserCar['car']}/${thisUserCar['compartment']}`)
   }
@@ -118,17 +131,26 @@ app.get('/car/:car/:compartment', async(req, res) => {
   const thisCompartmentType = await compartmentController.getCompartmentType(req, res).then(result => {
     return result
   })
-  
-  if (thisCompartmentType == true) {
-    if (rooms[req.params.compartment] == null) {
-      rooms[req.params.compartment] = { users: {} }
-    } 
-    
-    res.render('car', { title: 'Car', roomName: req.params.compartment });
-  } else {
-    res.render('floo', { title: 'Video Chat' });
-  }
 
+  if (thisCompartmentType === null) {
+    res.redirect('/chat')
+  } else if (thisCompartmentType === 401) {
+    res.redirect('/login')
+  } else if (thisCompartmentType['ok']) {
+    
+    if (thisCompartmentType['data'] == true) {
+      if (rooms[req.params.compartment] == null) {
+        rooms[req.params.compartment] = { users: {} }
+      } 
+      
+      res.render('car', { title: 'Car', roomName: req.params.compartment });
+    } else {
+      res.render('floo', { title: 'Video Chat' });
+    } 
+  } else {
+    
+    res.redirect(`/car/${req.params.car}/${thisCompartmentType['_id']}`)
+  }
 })
 
 // text chat function

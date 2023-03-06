@@ -64,10 +64,12 @@ function renderAllFriend() {
     .then((data) => {
         if (data['ok']) {
             let isPending = false
+            let isNoFriend = true
             data['data'].forEach(e => {
                 const resultItem = document.createElement('div')
                 renderFriendItem(resultItem, e, 'fetch')
                 if (e['verified']) {
+                    // isNoFriend = false
                     const resultItemInvite = document.createElement('div')
                     resultItemInvite.classList.add('friend-result-invite')
                     resultItemInvite.textContent = 'Chat'
@@ -89,12 +91,15 @@ function renderAllFriend() {
                     resultItem.append(resultItemInvite)
                     pendingFriendTab.append(resultItem)
                 }
-
-                if (isPending) {
-                    const pendingAlert = document.getElementById('friend-pending-alert')
-                    pendingAlert.style.display = 'block'
-                }
             })
+            if (isPending) {
+                const pendingAlert = document.getElementById('friend-pending-alert')
+                pendingAlert.style.display = 'block'
+            }
+            // if (isNoFriend) {
+            //     const noFriendAlert = document.getElementById('no-friend-slogan')
+            //     noFriendAlert.style.display = 'block'
+            // }
         }
     })
 }
@@ -271,3 +276,10 @@ function addFriendLink(parentItem, element, userId) {
     })
 }
 
+// function showNoFriend() {
+//     if ( allFriendTab.childNodes.length == 0 ) {
+//         const noFriendAlert = document.getElementById('no-friend-slogan')
+//         noFriendAlert.style.display = 'block'
+//     }
+//     console.log(allFriendTab.childNodes.length)
+// }

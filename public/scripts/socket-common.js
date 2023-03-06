@@ -124,7 +124,6 @@ function setSendButton(idType, id, type){
               
               messageData['attachments'].push(rawData)
               appendMessage(messageData);
-              scrollToBottom()
               socket.emit('send-chat-message', roomName, { content: message, attachments: rawData, createdAt: formattedDate });
           })
           
@@ -132,13 +131,15 @@ function setSendButton(idType, id, type){
           formData.append('attachments', imageInput.files[0])
       } else {
           appendMessage(messageData);
-          scrollToBottom()
           socket.emit('send-chat-message', roomName, { content: message, attachments: [], createdAt: formattedDate });
       }
 
       postMessage(formData, type)
       imageInput.value = '';
       messageInput.value = '';
+      setTimeout(() => {
+        scrollToBottom()
+      }, 100);
     })
   })
 }
