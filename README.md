@@ -2,15 +2,17 @@
 A chat website created with **Node.js**, **Socket.io** and **MongoDB** for Potterheads to (video) chat about their passion for the magical world.
 
 ## Table of Contents
-* Get Started
-* Technologies
-* User Guideline
-* Repository Structure
+* [Get Started](#get-started)
+* [Technologies](#technologies)
+* [User Guideline](#user-guideline)
+* [Repository Structure](#repository-structure)
 
+<span id="get-started"></span>
 ## Get Started
 1. npm install
-2. npm run
+2. npm run start
 
+<span id="technologies"></span>
 ## Technologies
 ![alt text](./files/Architecture.png)
 * Web App
@@ -28,6 +30,7 @@ A chat website created with **Node.js**, **Socket.io** and **MongoDB** for Potte
     * AWS EC2 Instance
     * Docker
 
+<span id="user-guideline"></span>
 ## User Guideline
 1. Create Account and Login<br>
 <img src="./files/1.Login.gif" width="350"/>
@@ -45,6 +48,7 @@ A chat website created with **Node.js**, **Socket.io** and **MongoDB** for Potte
 <img src="./files/6_1.Verify_Car.gif" width="350"/>
 <img src="./files/6_2.Verify_Chat.gif" width="350"/> -->
 
+<span id="repository-structure"></span>
 ## Repository Structure
 ```bash
 ├── README.md
