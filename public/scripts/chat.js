@@ -1,62 +1,95 @@
-const socket = io('/');
-const messageContainer = document.getElementById('message-container');
-const roomContainer = document.getElementById('room-container');
-const messageForm = document.getElementById('send-container');
-const messageInput = document.getElementById('message-input');
-
+let curPage = 0;
+let nextPage;
+let thisChat = window.location.href.split("/").pop();
 let thisUrl = window.location.href;
 let thisRoom = thisUrl.split("/").pop();
 
-window.onload = () => {
-  addVideoChat(thisRoom);  
+renderChatMessage()
+addVideoChat(thisRoom); 
+setSendButton('chat_id', thisRoom, 'chats');
+setUploadButton()
+previewPhotoName()
+
+function renderChatMessage() {
+    chatsList.then(res => {
+        getChatMessageById(thisChat, res, curPage)
+    })
+
+    setTimeout(() => {
+        scrollToBottom()
+        scrollEvent()
+    }, 1500);
 }
 
-if (messageForm != null) {
-  const name = prompt('What is your name?');
-  appendMessage('You joined');
-  socket.emit('new-user', roomName, name);
-
-  messageForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const message = messageInput.value;
-    appendMessage(`You: ${message}`);
-    socket.emit('send-chat-message', roomName, message);
-    messageInput.value = '';
-  })
+async function getParticipants(chatId, chatsList) {
+    for (let i = 0; i < chatsList.length; i++) {
+        if (chatsList[i]['_id'] === chatId) {
+            return chatsList[i]['participantsInfo']
+        }
+    };
+    return null
 }
 
-socket.on('room-created', room => {
-  const roomElement = document.createElement('div');
-  roomElement.innerText = room;
-  const roomLink = document.createElement('a');
-  roomLink.href = `/${room}`;
-  roomLink.innerText = 'join';
-  roomContainer.append(roomElement);
-  roomContainer.append(roomLink);
-})
+async function getChatMessageById(chatId, chatsList, curPage) {
 
-socket.on('chat-message', data => {
-  appendMessage(`${data.name}: ${data.message}`);
-})
-
-socket.on('user-connected', name => {
-  appendMessage(`${name} connected`);
-})
-
-socket.on('user-disconnected', name => {
-  appendMessage(`${name} disconnected`);
-})
-
-function appendMessage(message) {
-  const messageElement = document.createElement('div');
-  messageElement.innerText = message;
-  messageContainer.append(messageElement);
+    let participants = await getParticipants(chatId, chatsList)
+    let url = `/api/chats/message/${chatId}/${curPage}`
+    let response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        },
+    }).then((res) => { return res.json(); })
+    .then((data) => {
+        if (data['ok']) {
+            thisUser.then((res) => {
+                let messages = data['data']
+                if (messages == []) {
+                    console.log('no message yet')
+                } else {
+                    for (let i = 0; i < messages.length; i++) {
+                        messages[i]['createdAt'] = messages[i]['createdAt'].split('T')[0] + ' ' + messages[i]['createdAt'].split('T')[1].split('.')[0]
+                        if (messages[i]['author'] == res['_id']) {
+                            messages[i]['author'] = res['username']
+                            messages[i]['profilePicture'] = res['profilePicture']
+                        } else {
+                            messages[i]['author'] = participants['username']                        
+                            messages[i]['profilePicture'] = participants['profilePicture']  
+                        }
+    
+                        appendMessage(messages[i], 'fetch')
+                    }
+                }
+            })
+        } else if (window.location.href != '/') {
+            window.location = '/login'
+        }
+        return data;
+    })
+    nextPage = response['nextPage']
+    return response
 }
+
+async function scrollEvent() {
+    messageContainer.addEventListener("scroll", () => {
+        let scrollBottom = messageContainer.scrollHeight - messageContainer.clientHeight - messageContainer.scrollTop;
+        let scrolledHeight = messageContainer.offsetHeight + Math.ceil(scrollBottom);
+        let viewHeight = messageContainer.scrollHeight;
+  
+        if (scrolledHeight >= viewHeight && nextPage != null) {
+            curPage = nextPage;
+            chatsList.then(async res => {
+              await getChatMessageById(thisChat, res, curPage)
+          })
+        }
+    })
+  }
 
 function addVideoChat(room) {
-  const videoButton = document.getElementById('video-button');
-  videoButton.addEventListener('click', e => {
-    e.preventDefault();
-    window.location = `/floo/${room}`;
-  })
-}
+    const videoButton = document.getElementById('video-button');
+    videoButton.addEventListener('click', e => {
+      e.preventDefault();
+      window.location = `/floo/${room}`;
+    })
+  }

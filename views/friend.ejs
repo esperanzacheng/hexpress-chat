@@ -1,0 +1,31 @@
+<%- include('./partials/setup'); %>
+        <link rel="stylesheet" href='/styles/car.css' />
+        <link rel="stylesheet" href='/styles/chat.css' />
+        <link rel="stylesheet" href='/styles/friend.css' />
+        <script src="/scripts/navbar.js" defer></script>
+        <script src="/scripts/friend.js" defer></script>
+<%- include('./partials/header'); %>
+<%- include('./partials/sidebar'); %>
+            <div id="room-container">
+                <div class="friend-room-item" id="friend-all">All</div>
+                <div class="friend-room-item" id="friend-pending" >Pending
+                    <div class="friend-room-item-alert" id="friend-pending-alert"></div>
+                </div>
+                <div class="friend-room-item" id="friend-add">Add Friend</div>
+                <!-- <div id="no-friend-slogan" >← Add Friend Now ←</div> -->
+            </div>
+            <div class="friend-container" id="all-container"></div>
+            <div class="friend-container" id="pending-container"></div>
+            <div class="add-container" id="add-container">
+                <form class="friend-form" id="add-friend-form">
+                    <label class="friend-form-label" for="add-friend-form-name-input" id="add-friend-form-name-label" >Find Friend:</label>
+                    <input class="friend-form-input" id="add-friend-form-name-input" name="name" type="text" placeholder="Friend's Name" required>
+                    <button class="friend-form-button" id="add-friend-form-form-button">Find</button>
+                </form>
+                <div class="friend-result-container" id="friend-result-container">
+                    <label class="find-friend-slogan" for="add-friend-form-name-input" >↑ Find Your Friend Now ↑</label>
+                </div>
+            </div>
+            <img class="friend-trolley-lady" src="/images/trolley-lady.png"></img>
+        </div>
+<%- include('./partials/footer'); %>

@@ -1,0 +1,128 @@
+  
+  #create-compartment-button {
+    background-color: #932020;
+  }
+
+  #create-compartment-input {
+    font-size: 56px;
+    background-color: #932020;
+  }
+
+  .room-item-head {
+    grid-column: 1/3;
+    display: grid;
+    place-items: center;
+    font-family: 'MagicFont', Times, serif;
+    font-size: 30px;
+    font-weight: 700;
+    background-color: #FFFAFA;
+    color: #272525;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .room-item-input {
+    place-self: center start;
+    font-family: 'MagicFont', Times, serif;
+    font-size: 30px;
+    color: #FFFAFA;
+    padding-left: 20px;
+    background-color: #3B3838;
+    width: 90%;
+  }
+  
+  .room-item-button {
+    place-self: center;
+    font-family: 'MagicFont', Times, serif;
+    font-size: 30px;
+    color: #FFFAFA;
+    background-color: #932020;
+    border: 2px solid rgba(255, 250, 250, .5);
+    border-radius: 30%;
+    margin-right: 10px;
+  }
+  
+  .room-item-name {
+    place-self: center start;
+    font-family: 'MagicFont', Times, serif;
+    font-size: 30px;
+    color: #FFFAFA;
+    padding-left: 20px;
+  }
+  
+  .room-item-link {
+    place-self: center;
+    font-family: 'MagicFont', Times, serif;
+    font-size: 30px;
+    color: #FFFAFA;
+  }
+
+  #add-car-button {
+    height: 50px;
+    width: 50px;
+    background-color: #932020;
+  }
+
+  #post-container {
+    /* display: grid; */
+    width: inherit;
+    place-items: start;
+  }
+
+  #chat-send-container {
+    position: fixed;
+    bottom: 90px;
+    background-color: white;
+    width: calc(100vw - 320px);
+    height: 40px;
+    display: grid;
+    grid-template-columns: auto 80px;
+    font-size: 30px;
+  }
+
+  #message-input {
+    flex-grow: 1;
+    font-size: 30px;
+    padding-left: 20px;
+  }
+
+  .send-button {
+    place-self: center;
+    font-family: 'MagicFont', Times, serif;
+    font-size: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 20px;
+    border: 2px solid #3B3838;
+    border-radius: 30%;
+    cursor: pointer;
+    height: 80%;
+    background-color: #932020;
+    color: #FFFAFA;
+  }
+
+  #create-compartment-form {
+    display: none;
+  }
+
+  #member-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 120px;
+    height: 100%;
+    display: grid;
+    background-color: #3B3838;
+    grid-template-rows: repeat(auto-fill, 30px);
+    border-left: 2px solid #FFFAFA;
+  }
+
+  .member-item {
+    display: grid;
+    place-items: center start;
+    padding-left: 15px;
+    font-size: 24px;
+    border-top: 1px solid #FFFAFA;
+    border-bottom: 1px solid #FFFAFA;
+    color: #FFFAFA;
+  }

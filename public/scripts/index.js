@@ -36,26 +36,3 @@ function chatButton() {
     })
 }
 
-// function showNameForm() {
-//     const ticketText = document.getElementById('ticket-text');
-//     const ticket = document.getElementById('ticket');
-//     const nameText = document.getElementById('name-text');
-//     ticket.addEventListener('click', e => {
-//       e.preventDefault();
-//       const nameForm = document.getElementById('name-form');
-//       ticketText.style.display = "none";
-//       ticket.style.display = "none";
-//       nameText.style.display = "block";
-//       nameForm.style.display = "grid";
-
-//       const nameButton = document.getElementById('name-button');
-//       nameButton.addEventListener('click', e => {
-//           e.preventDefault();
-//           const nameInput = document.getElementById('name-input').value;
-//           // window.location = "/chat";
-//           console.log(nameInput)
-//           return nameInput;
-          
-//       })
-//     })
-//   }
