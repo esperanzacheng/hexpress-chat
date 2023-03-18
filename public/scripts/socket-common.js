@@ -92,15 +92,15 @@ function setSendButton(idType, id, type){
       e.preventDefault();
 
       let date = new Date();
-      let formattedDate = date.toLocaleString('en-US', { 
+      let formattedDate = date.toLocaleString('sv-SE', { 
+        year: 'numeric',
         month: '2-digit', 
         day: '2-digit', 
-        year: 'numeric', 
         hour: 'numeric', 
         minute: 'numeric', 
-        hour12: true 
+        second: 'numeric', 
       });
-      
+
       const message = messageInput.value;
       const imageInput = document.getElementById('image-input-test')
       const formData = new FormData();

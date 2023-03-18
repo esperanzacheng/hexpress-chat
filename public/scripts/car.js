@@ -51,7 +51,15 @@ async function getCompMessageById(compId, allMember, curPage) {
                 } else {
                     allMember.then((memberList) => {
                     for (let i = 0; i < messages.length; i++) {
-                        messages[i]['createdAt'] = messages[i]['createdAt'].split('T')[0] + ' ' + messages[i]['createdAt'].split('T')[1].split('.')[0]
+                        let date = new Date(messages[i]['createdAt']);
+                        messages[i]['createdAt'] = date.toLocaleString('sv-SE', { 
+                            year: 'numeric',
+                            month: '2-digit', 
+                            day: '2-digit', 
+                            hour: 'numeric', 
+                            minute: 'numeric', 
+                            second: 'numeric', 
+                        });
                         if (messages[i]['author'] == res['_id']) {
                             messages[i]['author'] = res['username']
                             messages[i]['profilePicture'] = res['profilePicture']

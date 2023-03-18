@@ -7,7 +7,6 @@ const s3 = require('../s3');
 exports.getChat = async(req, res, next) => {
     try {
         const user = await auth.authUser(req.headers["cookie"])
-
         if (user === 401) {
             return 401
         } else {
