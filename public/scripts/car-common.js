@@ -4,8 +4,6 @@ let thisCar = window.location.href.split('/')[4]
 getCompartment(thisCar)
 addCarCompartment();
 
-
-
 async function getCompartment(carId) {
     let url = `/api/compartment/${carId}`
     let response = await fetch(url, {
@@ -16,23 +14,23 @@ async function getCompartment(carId) {
         },
     }).then((res) => { return res.json(); })
     .then((data) => {
-        if (data['ok']) {
-            data['data'].forEach(e => {
+        if (data.ok) {
+            data.data.forEach(e => {
                 const roomItem = document.createElement('div')
                 roomItem.classList.add('room-item')
                 const roomItemName = document.createElement('div')
                 roomItemName.classList.add('room-item-name')
-                if (e['type'] === true) {
-                    roomItemName.textContent = '# ' + e['name']
+                if (e.type === true) {
+                    roomItemName.textContent = '# ' + e.name
                     roomContainer.insertBefore(roomItem, roomContainer.firstChild)
                 } else {
-                    roomItemName.textContent = '\u{1F508}' + e['name']
+                    roomItemName.textContent = '\u{1F508}' + e.name
                     roomContainer.insertBefore(roomItem, showAddButton)
                 }
 
                 
                 roomItem.append(roomItemName)
-                setCompartmentLink(roomItem, thisCar, e['_id'])
+                setCompartmentLink(roomItem, thisCar, e._id)
             });
             
         } else if (window.location.href != '/') {
@@ -70,7 +68,7 @@ function addCarCompartment() {
         }).then((res) => { return res.json(); })
         .then((data) => {
             if (data['ok']) {
-                window.location = `/car/${thisCar}/${data['data']['_id']}`
+                window.location = `/car/${thisCar}/${data.data._id}`
             }
         })
     })

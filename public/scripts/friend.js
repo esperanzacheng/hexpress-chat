@@ -40,13 +40,13 @@ function renderFriendItem(itemElement, srcElement, renderType) {
     const resultItemPhoto = document.createElement('img')
     resultItemPhoto.classList.add('friend-result-photo')
     if (renderType === 'fetch') {
-        resultItemPhoto.setAttribute('src', srcElement['profilePicture'])
+        resultItemPhoto.setAttribute('src', srcElement.profilePicture)
     } else {
-        resultItemPhoto.setAttribute('src', 'https://d2wihgnacqy3wz.cloudfront.net/' + srcElement['profilePicture'])
+        resultItemPhoto.setAttribute('src', 'https://d2wihgnacqy3wz.cloudfront.net/' + srcElement.profilePicture)
     }
     const resultItemName = document.createElement('div')
     resultItemName.classList.add('friend-result-name')
-    resultItemName.textContent = srcElement['username']
+    resultItemName.textContent = srcElement.username
 
     itemElement.append(resultItemPhotoBox)
     itemElement.append(resultItemName)
@@ -62,18 +62,16 @@ function renderAllFriend() {
         }
     }).then((res) => { return res.json(); })
     .then((data) => {
-        if (data['ok']) {
+        if (data.ok) {
             let isPending = false
-            let isNoFriend = true
             data['data'].forEach(e => {
                 const resultItem = document.createElement('div')
                 renderFriendItem(resultItem, e, 'fetch')
-                if (e['verified']) {
-                    // isNoFriend = false
+                if (e.verified) {
                     const resultItemInvite = document.createElement('div')
                     resultItemInvite.classList.add('friend-result-invite')
                     resultItemInvite.textContent = 'Chat'
-                    directToFriendChat(resultItemInvite, e['_id'], e['username'])
+                    directToFriendChat(resultItemInvite, e._id, e.username)
                     resultItem.append(resultItemInvite)
                     allFriendTab.append(resultItem)
                 } else {
@@ -81,12 +79,12 @@ function renderAllFriend() {
                     if (e['sender']) {
                         resultItemInvite.classList.add('friend-result-cancel')
                         resultItemInvite.textContent = 'Cancel'
-                        cancelFriend(resultItem, resultItemInvite, e['_id'])
+                        cancelFriend(resultItem, resultItemInvite, e._id)
                     } else {
                         isPending = true
                         resultItemInvite.classList.add('friend-result-accept')
                         resultItemInvite.textContent = 'Accept'
-                        confirmFriend(resultItem, resultItemInvite, e['_id'])
+                        confirmFriend(resultItem, resultItemInvite, e._id)
                     }
                     resultItem.append(resultItemInvite)
                     pendingFriendTab.append(resultItem)
@@ -96,10 +94,6 @@ function renderAllFriend() {
                 const pendingAlert = document.getElementById('friend-pending-alert')
                 pendingAlert.style.display = 'block'
             }
-            // if (isNoFriend) {
-            //     const noFriendAlert = document.getElementById('no-friend-slogan')
-            //     noFriendAlert.style.display = 'block'
-            // }
         }
     })
 }
@@ -110,10 +104,10 @@ function directToFriendChat(button, friendId, friendName) {
 
         thisUser.then((res) => {
             let isChatted = false
-            for (let i = 0; i < res['chats'].length; i++) {
-                if (res['chats'][i]['participants'] == friendId) {
+            for (let i = 0; i < res.chats.length; i++) {
+                if (res.chats[i].participants == friendId) {
                     isChatted = true
-                    window.location = `/chat/${res['chats'][i]['_id']}`
+                    window.location = `/chat/${res.chats[i]._id}`
                     break
                 } 
             }
@@ -131,7 +125,7 @@ function directToFriendChat(button, friendId, friendName) {
                 }).then((res) => { return res.json(); })
                 .then((data) => {
                     if (data['ok']) {
-                        window.location = `/chat/${data['data']['_id']}`
+                        window.location = `/chat/${data.data._id}`
                     }
                 })
             }
@@ -154,16 +148,16 @@ function confirmFriend(parentItem, element, friendId) {
             })
         }).then((res) => { return res.json(); })
         .then((data) => {
-            if (data['ok']) {
+            if (data.ok) {
                 pendingFriendTab.removeChild(parentItem)
 
                 const resultItem = document.createElement('div')
-                renderFriendItem(resultItem, data['data'])
+                renderFriendItem(resultItem, data.data)
 
                 const resultItemInvite = document.createElement('div')
                 resultItemInvite.classList.add('friend-result-invite')
                 resultItemInvite.textContent = 'Chat'
-                directToFriendChat(resultItemInvite, data['data']['_id'], data['data']['username'])
+                directToFriendChat(resultItemInvite, data.data._id, data.data.username)
                 resultItem.append(resultItemInvite)
                 allFriendTab.append(resultItem)
             }
@@ -186,7 +180,7 @@ function cancelFriend(parentItem, element, friendId) {
             })
         }).then((res) => { return res.json(); })
         .then((data) => {
-            if (data['ok']) {
+            if (data.ok) {
                 pendingFriendTab.removeChild(parentItem)
             }
         })
@@ -219,17 +213,17 @@ function addFriend() {
             }).then((res) => { return res.json()})
             .then((data) => {
                 
-                if( data['ok'] ) {
+                if( data.ok ) {
                     friendNameInput.value = ''
                     
-                    data['data'].forEach(e => {
+                    data.data.forEach(e => {
                         const resultItem = document.createElement('div')
                         renderFriendItem(resultItem, e, 'fetch')
 
                         const resultItemInvite = document.createElement('div')
                         resultItemInvite.classList.add('friend-result-invite')
                         resultItemInvite.textContent = 'Add'
-                        addFriendLink(resultItem, resultItemInvite, e['_id'])
+                        addFriendLink(resultItem, resultItemInvite, e._id)
 
                         resultItem.append(resultItemInvite)
                         resultContainer.append(resultItem)
@@ -257,16 +251,16 @@ function addFriendLink(parentItem, element, userId) {
             })
         }).then((res) => { return res.json(); })
         .then((data) => {
-            if (data['ok']) {
+            if (data.ok) {
                 resultContainer.removeChild(parentItem)
 
                 const resultItem = document.createElement('div')
-                renderFriendItem(resultItem, data['data'])
+                renderFriendItem(resultItem, data.data)
 
                 const resultItemInvite = document.createElement('div')
                 resultItemInvite.classList.add('friend-result-cancel')
                 resultItemInvite.textContent = 'Cancel'
-                cancelFriend(resultItem, resultItemInvite, data['data']['_id'])
+                cancelFriend(resultItem, resultItemInvite, data.data._id)
 
                 resultItem.append(resultItemInvite)
                 pendingFriendTab.append(resultItem)
@@ -275,11 +269,3 @@ function addFriendLink(parentItem, element, userId) {
         })
     })
 }
-
-// function showNoFriend() {
-//     if ( allFriendTab.childNodes.length == 0 ) {
-//         const noFriendAlert = document.getElementById('no-friend-slogan')
-//         noFriendAlert.style.display = 'block'
-//     }
-//     console.log(allFriendTab.childNodes.length)
-// }

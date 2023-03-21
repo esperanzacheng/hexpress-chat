@@ -26,11 +26,11 @@ async function authUser() {
         },
     }).then((res) => { return res.json(); })
     .then((data) => {
-        if (data['username']) {
+        if (data.username) {
             const navbarUsername = document.getElementById('banner-member-center-username')
             const navbarImg = document.getElementById('banner-member-center-img')
-            navbarUsername.textContent = data['username']
-            navbarImg.setAttribute('src', data['profilePicture'])
+            navbarUsername.textContent = data.username
+            navbarImg.setAttribute('src', data.profilePicture)
         } else if (window.location.href != '/') {
             window.location = '/login'
         }
@@ -194,10 +194,10 @@ function fetchAllCar() {
         data.forEach(e => {
             let newCar = document.createElement('a')
             newCar.classList.add('chat-item')
-            newCar.textContent = e['name']
+            newCar.textContent = e.name
             const createCarButton = document.getElementById('create-car-button')
             chatContainer.insertBefore(newCar, createCarButton)
-            addCarLink(newCar, e['_id'])
+            addCarLink(newCar, e._id)
         });
     })
 }
@@ -237,7 +237,7 @@ function addCar() {
             })
         }).then((res) => { return res.json(); })
         .then((data) => {
-            if(data['ok']) {
+            if(data.ok) {
                 window.location.reload()
             }
         })
@@ -270,32 +270,32 @@ function setCarSearch() {
                     },
                 }).then((res) => { return res.json(); })
                 .then((data) => {
-                    if (data['ok']) {
+                    if (data.ok) {
                         const resultContainer = document.getElementById('search-bar-result-container')
                         
                         while (resultContainer.firstChild) {
                             resultContainer.removeChild(resultContainer.firstChild)
                         }
                         
-                        data['data'].forEach(e => {
+                        data.data.forEach(e => {
                             const resultItem = document.createElement('div')
                             resultItem.classList.add('search-bar-result-item')
                             const resultItemName = document.createElement('div')
                             resultItemName.classList.add('search-bar-result-item-name')
-                            resultItemName.textContent = e['name']
+                            resultItemName.textContent = e.name
                             const resultItemTopic = document.createElement('span')
                             resultItemTopic.classList.add('search-bar-result-item-topic')
-                            resultItemTopic.textContent = ' /' + e['topic']
+                            resultItemTopic.textContent = ' /' + e.topic
                             
                             const resultItemInvite = document.createElement('div')
-                            if (res.includes(e['_id'])) {
+                            if (res.includes(e._id)) {
                                 resultItemInvite.classList.add('search-bar-result-item-redirect')
                                 resultItemInvite.textContent = 'Go'
-                                setCarRedirectButton(resultItemInvite, e['_id'])
+                                setCarRedirectButton(resultItemInvite, e._id)
                             } else {
                                 resultItemInvite.classList.add('search-bar-result-item-invite')
                                 resultItemInvite.textContent = 'Join'
-                                setCarJoinButton(resultItemInvite, e['_id'])
+                                setCarJoinButton(resultItemInvite, e._id)
                             }
                             resultContainer.append(resultItem)
                             resultItem.append(resultItemName)
@@ -335,7 +335,7 @@ function setCarJoinButton(element, carId) {
             })
         }).then((res) => { return res.json(); })
         .then((data) => {
-            if (data['ok']) {
+            if (data.ok) {
                 window.location = `/car/${carId}`
             }
         })
@@ -345,8 +345,8 @@ function setCarJoinButton(element, carId) {
 function getAllChatId() {
     let thisUserCars = []
     let response = thisUser.then((res) => {
-        res['cars'].forEach(e => {
-            thisUserCars.push(e['_id'])
+        res.cars.forEach(e => {
+            thisUserCars.push(e._id)
         })
         return thisUserCars
     })
@@ -424,7 +424,7 @@ function changeProfile() {
 function FriendAlert() {
     thisUser.then((res) => {
         for ( let i = 0; i < res['friends'].length; i++) {
-            if ( !res['friends'][i]['verified'] && !res['friends'][i]['sender']) {
+            if ( !res.friends[i].verified && !res.friends[i].sender) {
                 const friendAlert = document.getElementById('friend-alert')
                 friendAlert.style.display = 'block'
                 break

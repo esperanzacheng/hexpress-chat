@@ -9,7 +9,7 @@ const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex
 
 exports.getChatMessage = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");
@@ -36,7 +36,7 @@ exports.getChatMessage = async(req, res, next) => {
 
 exports.postChatMessage = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
@@ -49,11 +49,11 @@ exports.postChatMessage = async(req, res, next) => {
                 await s3.uploadFile(file.buffer, imageName, file.mimetype)
                 const postedFile = await s3.getObjectSignedUrl(imageName);
 
-                reqBodyData['attachments'] = postedFile
+                reqBodyData.attachments = postedFile
             } 
 
             const newMessage = new Message(reqBodyData)
-            newMessage['author'] = user['_id']
+            newMessage.author = user._id
 
             const thisMessage = await newMessage.save();
 
@@ -70,7 +70,7 @@ exports.postChatMessage = async(req, res, next) => {
 
 exports.putChatMessage = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");
@@ -93,7 +93,7 @@ exports.putChatMessage = async(req, res, next) => {
 
 exports.deleteChatMessage = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");
@@ -113,7 +113,7 @@ exports.deleteChatMessage = async(req, res, next) => {
 
 exports.getCompartmentMessage = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");
@@ -140,7 +140,7 @@ exports.getCompartmentMessage = async(req, res, next) => {
 
 exports.postCompartmentMessage = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
@@ -153,11 +153,11 @@ exports.postCompartmentMessage = async(req, res, next) => {
                 await s3.uploadFile(file.buffer, imageName, file.mimetype)
                 const postedFile = await s3.getObjectSignedUrl(imageName);
 
-                reqBodyData['attachments'] = postedFile
+                reqBodyData.attachments = postedFile
             } 
 
             const newMessage = new Message(reqBodyData)
-            newMessage['author'] = user['_id']
+            newMessage.author = user._id
 
             const thisMessage = await newMessage.save();
 
@@ -174,7 +174,7 @@ exports.postCompartmentMessage = async(req, res, next) => {
 
 exports.putCompartmentMessage = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");
@@ -197,7 +197,7 @@ exports.putCompartmentMessage = async(req, res, next) => {
 
 exports.deleteCompartmentMessage = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");

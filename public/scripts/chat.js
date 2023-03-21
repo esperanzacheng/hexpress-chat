@@ -23,8 +23,8 @@ function renderChatMessage() {
 
 async function getParticipants(chatId, chatsList) {
     for (let i = 0; i < chatsList.length; i++) {
-        if (chatsList[i]['_id'] === chatId) {
-            return chatsList[i]['participantsInfo']
+        if (chatsList[i]._id === chatId) {
+            return chatsList[i].participantsInfo
         }
     };
     return null
@@ -42,15 +42,15 @@ async function getChatMessageById(chatId, chatsList, curPage) {
         },
     }).then((res) => { return res.json(); })
     .then((data) => {
-        if (data['ok']) {
+        if (data.ok) {
             thisUser.then((res) => {
-                let messages = data['data']
+                let messages = data.data
                 if (messages == []) {
                     console.log('no message yet')
                 } else {
                     for (let i = 0; i < messages.length; i++) {
-                        let date = new Date(messages[i]['createdAt']);
-                        messages[i]['createdAt'] = date.toLocaleString('sv-SE', { 
+                        let date = new Date(messages[i].createdAt);
+                        messages[i].createdAt = date.toLocaleString('sv-SE', { 
                             year: 'numeric',
                             month: '2-digit', 
                             day: '2-digit', 
@@ -58,12 +58,12 @@ async function getChatMessageById(chatId, chatsList, curPage) {
                             minute: 'numeric', 
                             second: 'numeric', 
                         });
-                        if (messages[i]['author'] == res['_id']) {
-                            messages[i]['author'] = res['username']
-                            messages[i]['profilePicture'] = res['profilePicture']
+                        if (messages[i].author == res._id) {
+                            messages[i].author = res.username
+                            messages[i].profilePicture = res.profilePicture
                         } else {
-                            messages[i]['author'] = participants['username']                        
-                            messages[i]['profilePicture'] = participants['profilePicture']  
+                            messages[i].author = participants.username                      
+                            messages[i].profilePicture = participants.profilePicture 
                         }
     
                         appendMessage(messages[i], 'fetch')
@@ -75,7 +75,7 @@ async function getChatMessageById(chatId, chatsList, curPage) {
         }
         return data;
     })
-    nextPage = response['nextPage']
+    nextPage = response.nextPage
     return response
 }
 

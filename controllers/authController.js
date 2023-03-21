@@ -12,11 +12,21 @@ exports.getUser = async(req, res, next) => {
             res.status(401).json("Unauthorized");
         } else {
             let resp;
-            if (user['profilePicture']) {
-                const photo = await s3.getObjectSignedUrl(user['profilePicture'])
-                resp = { _id:user['_id'], username: user['username'], profilePicture: photo, cars: user['cars'], friends: user['friends'], chats:user['chats']}
+            if (user.profilePicture) {
+                const photo = await s3.getObjectSignedUrl(user.profilePicture)
+                resp = { _id: user._id, 
+                    username: user.username, 
+                    profilePicture: photo, 
+                    cars: user.cars, 
+                    friends: user.friends, 
+                    chats:user.chats }
             } else {
-                resp = { _id:user['_id'], username: user['username'], profilePicture: user['profilePicture'], cars: user['cars'], friends: user['friends'], chats:user['chats']}
+                resp = { _id:user._id, 
+                    username: user.username, 
+                    profilePicture: user.profilePicture, 
+                    cars: user.cars, 
+                    friends: user.friends, 
+                    chats:user.chats }
             }
             
             res.status(200).json(resp);
@@ -39,10 +49,10 @@ exports.loginUser = async(req, res, next) => {
         const validPassword = await bcrypt.compare(req.body.password, user.password)
         !validPassword && res.status(400).json({ error: "wrong password" })
 
-        const userId = { _id: user['_id'] }
+        const userId = { _id: user._id }
         const token = jwt.sign(userId, SECRET, { expiresIn: EXPIRES_IN });
         res.cookie('token', token, { maxAge: EXPIRES_IN, httpOnly: true}); 
-        res.status(200).json({ ok: true, cars: user['cars'] });
+        res.status(200).json({ ok: true, cars: user.cars });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;

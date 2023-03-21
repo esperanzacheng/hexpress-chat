@@ -50,9 +50,9 @@ function postUser() {
                 })
             }).then((res) => { return res.json(); })
             .then((data) => {
-                if (data['error'] == 'username is used') {
+                if (data.error == 'username is used') {
                     usernameUsed.style.display = "block"
-                } else if (data['error'] == 'email is used') {
+                } else if (data.error == 'email is used') {
                     emailUsed.style.display = 'block'
                 } else {
                     registerSuccess.style.display = 'block'
@@ -100,12 +100,11 @@ function loginUser() {
                 })
             }).then((res) => { return res.json(); })
             .then((data) => {
-                if (data['ok']) {
-                    // console.log(`/car/${data['cars'][0]['car_name']}.general`)
+                if (data.ok) {
                     window.location = `/chat`
-                } else if (data['error'] == "user not found") {
+                } else if (data.error == "user not found") {
                     wrongEmail.style.display = "block"
-                } else if (data['error'] == "wrong password") {
+                } else if (data.error == "wrong password") {
                     wrongPassword.style.display = "block"
                 }
             })

@@ -11,7 +11,5 @@ const uri = `mongodb+srv://${config.dbUser}:${config.dbPwd}@${config.dbName}.mem
 exports.getConnection = () => {
     mongoose.set('strictQuery', false);
     mongoose.connect(uri, mongooseSetting)
-    // .then(() => console.log('Database is connected.'))
-    // .then(x => console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`))
     .catch(err => console.error('Error connecting to mongo', err));
 }
