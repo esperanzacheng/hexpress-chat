@@ -24,7 +24,7 @@ A chat website created with **Node.js**, **Socket.io** and **MongoDB** for Potte
 * CDN
     * AWS S3
     * AWS Cloudfront
-* CI/CD
+* Version Control & Deployment
     * GitHub
     * Nginx
     * AWS EC2 Instance
@@ -44,9 +44,6 @@ A chat website created with **Node.js**, **Socket.io** and **MongoDB** for Potte
 <img src="./files/4_2.Car_Create.gif" width="350"/>
 5. Select / Create a Compartment to Manage Sub-Topic Rooms<br>
 <img src="./files/5.Comp.gif" width="350"/>
-<!-- 6. All Chat Data is User-Verified<br>
-<img src="./files/6_1.Verify_Car.gif" width="350"/>
-<img src="./files/6_2.Verify_Chat.gif" width="350"/> -->
 
 <span id="repository-structure"></span>
 ## Repository Structure

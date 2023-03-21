@@ -3,7 +3,7 @@ const auth = require('./authController')
 
 exports.getCompartment = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");
@@ -21,25 +21,25 @@ exports.getCompartment = async(req, res, next) => {
 
 exports.getFirstCompartment = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
         if (user === 401) {
             return 401
         } else {
             const car = req.params.car
             let thisUserCars = []
-            user['cars'].forEach(e => {
-                thisUserCars.push(e['_id'].toString())
+            user.cars.forEach(e => {
+                thisUserCars.push(e._id.toString())
             })
             if (thisUserCars.includes(car)) {
                 const firstCar = await Compartment.findOne({ car_id: car })
-                const carWithCompartment = { car: car, compartment: firstCar['_id'] }
+                const carWithCompartment = { car: car, compartment: firstCar._id }
                 return carWithCompartment;
 
             } else if (thisUserCars.length === 0) {
                 return { err: 403, data: null }
             } else {
                 const firstCar = await Compartment.findOne({ car_id: thisUserCars[0] })
-                const carWithCompartment = { car: thisUserCars[0], compartment: firstCar['_id'] }
+                const carWithCompartment = { car: thisUserCars[0], compartment: firstCar._id }
                 return { err: 403, data: carWithCompartment }
             }
         }
@@ -60,22 +60,22 @@ exports.getCompartmentType = async(req, res) => {
         } else {
             const car = req.params.car
             let thisUserCars = []
-            user['cars'].forEach(e => {
-                thisUserCars.push(e['_id'].toString())
+            user.cars.forEach(e => {
+                thisUserCars.push(e._id.toString())
             })
             if (thisUserCars.includes(car)) {
                 const compartment = req.params.compartment
                 const allCompartment = await Compartment.find({ car_id: req.params.car })
                 let allCompartmentId = []
                 allCompartment.forEach(e => {
-                    allCompartmentId.push(e['_id'].toString())
+                    allCompartmentId.push(e._id.toString())
                 })
                 if (compartment === undefined || !allCompartmentId.includes(compartment)) {
                     const firstCompartment = await Compartment.findOne({ car_id: req.params.car })
-                    return { ok: false, _id: firstCompartment['_id'] }
+                    return { ok: false, _id: firstCompartment._id }
                 } else {
                     const thisCompartment = await Compartment.findOne({ _id: compartment })
-                    const type = thisCompartment['type']
+                    const type = thisCompartment.type
                     return { ok: true, data: type };
                 }
             } else {
@@ -92,13 +92,13 @@ exports.getCompartmentType = async(req, res) => {
 
 exports.postCompartment = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
             const newCompartment = new Compartment(req.body)
-            newCompartment['owner_id'] = user['_id']
-            newCompartment['message_count'] = 0
+            newCompartment.owner_id = user._id
+            newCompartment.message_count = 0
             const thisCompartment = await newCompartment.save();
             
             res.status(200).json({ ok: true, data: thisCompartment});
@@ -113,7 +113,7 @@ exports.postCompartment = async(req, res, next) => {
 
 exports.putCompartment = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");
@@ -136,7 +136,7 @@ exports.putCompartment = async(req, res, next) => {
 
 exports.deleteCompartment = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");

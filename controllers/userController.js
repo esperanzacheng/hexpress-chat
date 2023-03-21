@@ -9,7 +9,7 @@ const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex
 
 exports.getAllUser = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");
@@ -17,21 +17,22 @@ exports.getAllUser = async(req, res, next) => {
             const allUser = await User.find({ username: { $regex: new RegExp(req.params.username, 'i') } });
             let allUserName = []
             let friended = []
-            user['friends'].forEach(e => {
-                friended.push(e['_id'].toString())
+            user.friends.forEach(e => {
+                friended.push(e._id.toString())
             })
             
             for ( let i = 0; i < allUser.length; i++ ) {
                 
-                if (allUser[i]['_id'].toString() == user['_id'].toString()) {
+                if (allUser[i]._id.toString() == user._id.toString()) {
                     continue
-                } else if (friended.includes(allUser[i]['_id'].toString())) {
+                } else if (friended.includes(allUser[i]._id.toString())) {
                     continue
                 } else {
-                    let thisUser = { }
-                    thisUser['_id'] = allUser[i]['_id']
-                    thisUser['username'] = allUser[i]['username']
-                    thisUser['profilePicture'] = await s3.getObjectSignedUrl(allUser[i]['profilePicture'])
+                    const thisUser = { 
+                        _id: allUser[i]._id,
+                        username: allUser[i].username,
+                        profilePicture: await s3.getObjectSignedUrl(allUser[i].profilePicture),
+                     }
                     allUserName.push(thisUser)
                 }
             }
@@ -78,7 +79,7 @@ exports.postUser = async(req, res, next) => {
 
 exports.putUser = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");
@@ -97,13 +98,13 @@ exports.putUser = async(req, res, next) => {
 
                 if (req.body.username) {
                     thisUser = await User.findOneAndUpdate(
-                        { _id: user['_id'] }, 
+                        { _id: user._id }, 
                         { $set: { username: req.body.username, profilePicture: imageName } }, 
                         { new: true }
                     );
                 } else {
                     thisUser = await User.findOneAndUpdate(
-                        { _id: user['_id'] }, 
+                        { _id: user._id }, 
                         { $set: { profilePicture: imageName } }, 
                         { new: true }
                     );
@@ -112,7 +113,7 @@ exports.putUser = async(req, res, next) => {
                 response = { user: thisUser, profilePicture: postedFile }
             } else {
                 thisUser = await User.findOneAndUpdate(
-                    { _id: user['_id'] }, 
+                    { _id: user._id }, 
                     { $set: { username: req.body.username } }, 
                     { new: true }
                 );
@@ -131,12 +132,12 @@ exports.putUser = async(req, res, next) => {
 
 exports.deleteUser = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
-            const thisUser = await User.deleteOne({ _id: user['_id'] });
+            const thisUser = await User.deleteOne({ _id: user._id });
 
             res.status(200).json({ ok: true });
         } 

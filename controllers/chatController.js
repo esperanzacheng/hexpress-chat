@@ -6,20 +6,19 @@ const s3 = require('../s3');
 
 exports.getChat = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
-
+        const user = await auth.authUser(req.headers.cookie)
         if (user === 401) {
             return 401
         } else {
             let firstChatId;
 
             if (user['chats'][0]) {
-                const firstChat = await Chat.find({ _id: { $in: user['chats'][0]}});
+                const firstChat = await Chat.find({ _id: { $in: user.chats[0]}});
                 
                 if (firstChat == []) {
                     firstChatId = null
                 } else {
-                    firstChatId = firstChat[0]['_id'];
+                    firstChatId = firstChat[0]._id;
                 }
             } else {
                 firstChatId = null
@@ -37,14 +36,14 @@ exports.getChat = async(req, res, next) => {
 
 exports.verifyChats = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
 
         if (user === 401) {
             return 401;
         } else {
             const allChat = []
-            user['chats'].forEach(e => {
-                allChat.push(e['_id'].toString())
+            user.chats.forEach(e => {
+                allChat.push(e._id.toString())
             })
 
             if (allChat.includes(req.params.chat_id)) {
@@ -70,7 +69,7 @@ exports.getChats = async(req, res, next) => {
         } else {
             const allChat = []
             user['chats'].forEach(e => {
-                allChat.push(e['_id'])
+                allChat.push(e._id)
             })
 
             const chatList = await Chat.aggregate([
@@ -97,12 +96,12 @@ exports.getChats = async(req, res, next) => {
             ]).sort({ _id: 1 })
 
             for ( let i = 0; i < chatList.length; i++ ) {
-                if (chatList[i]['participantsInfo'][1][0]['_id'].toString() == user['_id'].toString()) {
-                    chatList[i]['participantsInfo'] = chatList[i]['participantsInfo'][0][0]
+                if (chatList[i].participantsInfo[1][0]._id.toString() == user._id.toString()) {
+                    chatList[i].participantsInfo = chatList[i].participantsInfo[0][0]
                 } else {
-                    chatList[i]['participantsInfo'] = chatList[i]['participantsInfo'][1][0]
+                    chatList[i].participantsInfo = chatList[i].participantsInfo[1][0]
                 }
-                chatList[i]['participantsInfo']['profilePicture'] = await s3.getObjectSignedUrl(chatList[i]['participantsInfo']['profilePicture'])
+                chatList[i].participantsInfo.profilePicture = await s3.getObjectSignedUrl(chatList[i].participantsInfo.profilePicture)
             }
             
             res.status(200).json({ok: true, data: chatList});
@@ -117,7 +116,7 @@ exports.getChats = async(req, res, next) => {
 
 exports.postChat = async(req, res, next) => {
     try {
-        const user = await auth.authUser(req.headers["cookie"])
+        const user = await auth.authUser(req.headers.cookie)
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
@@ -127,19 +126,19 @@ exports.postChat = async(req, res, next) => {
             const newChat = new Chat({ 
                 participants: [
                     { _id: formattedId, name: req.body.target_name }, 
-                    { _id: user['_id'], name: user['username'] }
+                    { _id: user._id, name: user.username }
                 ]})
             const thisChat = await newChat.save();
 
             const thisUser = await User.findOneAndUpdate(
-                { _id: user['_id'] },
-                { $push: { chats: { _id: thisChat['_id'], participants: formattedId } }},
+                { _id: user._id },
+                { $push: { chats: { _id: thisChat._id, participants: formattedId } }},
                 { new: true }
             );
 
             const targetUser = await User.findOneAndUpdate(
                 { _id: formattedId },
-                { $push: { chats: { _id: thisChat['_id'], participants: user['_id'] } }},
+                { $push: { chats: { _id: thisChat._id, participants: user._id } }},
                 { new: true }
             );
 
@@ -154,29 +153,6 @@ exports.postChat = async(req, res, next) => {
     }
 }
 
-// exports.putChat = async(req, res, next) => {
-//     try {
-//         const user = await auth.authUser(req.headers["cookie"])
-
-//         if (user === 401) {
-//             res.status(401).json("Unauthorized");
-//         } else {
-//             const thisChat = await Chat.findOneAndUpdate(
-//                 { _id: req.params.chat_id }, 
-//                 { $set: req.body }, 
-//                 { new: true }
-//             );
-
-//             res.status(200).json(thisChat);
-//         } 
-//     } catch (err) {
-//         if (!err.statusCode) {
-//             err.statusCode = 500;
-//         }
-//         next(err);
-//     }
-// }
-
 exports.deleteChat = async(req, res, next) => {
     try {
         const user = await auth.authUser(req.headers["cookie"])
@@ -187,14 +163,14 @@ exports.deleteChat = async(req, res, next) => {
             const thisChat = await Chat.deleteOne({ _id: req.body.chat_id });
 
             const thisUser = await User.findOneAndUpdate(
-                { _id: user['_id'] },
-                { $pull: { chats: thisChat['_id'] }},
+                { _id: user._id },
+                { $pull: { chats: thisChat._id }},
                 { new: true }
             );
 
             const targetUser = await User.findOneAndUpdate(
                 { _id: req.body._id },
-                { pull: { chats: thisChat['_id'] }},
+                { pull: { chats: thisChat._id }},
                 { new: true }
             );
 

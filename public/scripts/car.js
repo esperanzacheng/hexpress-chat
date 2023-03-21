@@ -18,12 +18,12 @@ async function getCarMember(carId) {
         },
     }).then((res) => { return res.json(); })
     .then((data) => {
-        if (data['ok']) {
+        if (data.ok) {
             const memberContainer = document.getElementById('member-container')
-            data['data'].forEach(e => {
+            data.data.forEach(e => {
                 const memberItem = document.createElement('div')
                 memberItem.classList.add('member-item')
-                memberItem.textContent = e['username']
+                memberItem.textContent = e.username
                 memberContainer.append(memberItem)
             }) 
             return data
@@ -45,21 +45,29 @@ async function getCompMessageById(compId, allMember, curPage) {
     .then((data) => {
         if (data['ok']) {
             thisUser.then((res) => {
-                let messages = data['data']
+                let messages = data.data
                 if (messages == []) {
                     console.log('no message yet')
                 } else {
                     allMember.then((memberList) => {
                     for (let i = 0; i < messages.length; i++) {
-                        messages[i]['createdAt'] = messages[i]['createdAt'].split('T')[0] + ' ' + messages[i]['createdAt'].split('T')[1].split('.')[0]
-                        if (messages[i]['author'] == res['_id']) {
-                            messages[i]['author'] = res['username']
-                            messages[i]['profilePicture'] = res['profilePicture']
+                        let date = new Date(messages[i]['createdAt']);
+                        messages[i].createdAt = date.toLocaleString('sv-SE', { 
+                            year: 'numeric',
+                            month: '2-digit', 
+                            day: '2-digit', 
+                            hour: 'numeric', 
+                            minute: 'numeric', 
+                            second: 'numeric', 
+                        });
+                        if (messages[i].author == res._id) {
+                            messages[i].author = res.username
+                            messages[i].profilePicture = res.profilePicture
                         } else {
-                            for (let j = 0; j < memberList['data'].length; j++) {
-                                if (messages[i]['author'] == memberList['data'][j]['_id']) {
-                                    messages[i]['author'] = memberList['data'][j]['username']
-                                    messages[i]['profilePicture'] = memberList['data'][j]['profilePicture']
+                            for (let j = 0; j < memberList.data.length; j++) {
+                                if (messages[i].author == memberList.data[j]._id) {
+                                    messages[i].author = memberList.data[j].username
+                                    messages[i].profilePicture = memberList.data[j].profilePicture
                                     break
                                 }  
                             } 
@@ -75,7 +83,7 @@ async function getCompMessageById(compId, allMember, curPage) {
 
         return data;        
     })
-    nextPage = response['nextPage']
+    nextPage = response.nextPage
     setTimeout(() => {
         scrollToBottom()
         scrollEvent()

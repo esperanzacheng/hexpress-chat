@@ -17,22 +17,22 @@ function appendMessage(message, appendType) {
   messageElement.classList.add('message-single-container')
   const messageImg = document.createElement('img');
   messageImg.classList.add('message-single-img')
-  messageImg.setAttribute('src', message['profilePicture'])
+  messageImg.setAttribute('src', message.profilePicture)
   const messageName = document.createElement('div');
   messageName.classList.add('message-single-name')
-  messageName.textContent = message['author']
+  messageName.textContent = message.author
   const messageTime = document.createElement('div');
   messageTime.classList.add('message-single-time')
-  messageTime.textContent = message['createdAt']
+  messageTime.textContent = message.createdAt
   
   messageElement.append(messageImg)
   messageElement.append(messageName)
   messageElement.append(messageTime)
   
-  if (message['content'] != '') {
+  if (message.content != '') {
     const messageDesc = document.createElement('div');
     messageDesc.classList.add('message-single-desc')
-    messageDesc.textContent = message['content']
+    messageDesc.textContent = message.content
     messageElement.append(messageDesc)
   }
 
@@ -41,7 +41,7 @@ function appendMessage(message, appendType) {
     messageImgContainer.classList.add('message-single-img-container')
 
     const messageAttachments = document.createElement('img');
-    messageAttachments.setAttribute('src', message['attachments'])
+    messageAttachments.setAttribute('src', message.attachments)
     messageImgContainer.append(messageAttachments)
     messageElement.append(messageImgContainer)
   }
@@ -92,29 +92,28 @@ function setSendButton(idType, id, type){
       e.preventDefault();
 
       let date = new Date();
-      let formattedDate = date.toLocaleString('en-US', { 
+      let formattedDate = date.toLocaleString('sv-SE', { 
+        year: 'numeric',
         month: '2-digit', 
         day: '2-digit', 
-        year: 'numeric', 
         hour: 'numeric', 
         minute: 'numeric', 
-        hour12: true 
+        second: 'numeric', 
       });
-      
+
       const message = messageInput.value;
       const imageInput = document.getElementById('image-input-test')
       const formData = new FormData();
-      let messageData = { }
+      const messageData = { 
+        content: message,
+        profilePicture: res.profilePicture,
+        author: res.username,
+        createdAt: formattedDate,
+        attachments: []
+      }
 
       formData.append(idType, id)
       formData.append('content', message)
-
-      messageData['content'] = message
-      messageData['profilePicture'] = res['profilePicture']
-      messageData['author'] = res['username']
-      messageData['createdAt'] = formattedDate
-      messageData['attachments'] = []
-
       
       if (imageInput.files.length) {
           const reader = new FileReader();
@@ -122,7 +121,7 @@ function setSendButton(idType, id, type){
               let rawData = new ArrayBuffer();
               rawData = reader.result;
               
-              messageData['attachments'].push(rawData)
+              messageData.attachments.push(rawData)
               appendMessage(messageData);
               socket.emit('send-chat-message', roomName, { content: message, attachments: rawData, createdAt: formattedDate });
           })
@@ -151,7 +150,7 @@ async function postMessage(formData, type) {
       body: formData // message is a form object, including chat_id, message, other data
   }).then((res) => { return res.json(); })
   .then((data) => {
-      if (data['ok']) {
+      if (data.ok) {
           const imageInput = document.getElementById('image-input-test')
           const photoName = document.getElementById('upload-file-name')
           const photoCloseButton = document.getElementById('upload-file-name-close')

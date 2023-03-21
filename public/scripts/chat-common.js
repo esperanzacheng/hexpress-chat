@@ -11,17 +11,17 @@ async function getUserChats() {
         },
     }).then((res) => { return res.json(); })
     .then((data) => {
-        if (data['ok']) {
+        if (data.ok) {
             
-            data['data'].forEach(e => {
+            data.data.forEach(e => {
                 const roomItem = document.createElement('div')
                 roomItem.classList.add('room-item')
                 const roomItemName = document.createElement('div')
                 roomItemName.classList.add('room-item-name')
-                roomItemName.textContent = e['participantsInfo']['username']                    
+                roomItemName.textContent = e.participantsInfo.username                  
                 roomContainer.append(roomItem)
                 roomItem.append(roomItemName)
-                addChatLink(roomItem, e['_id'])
+                addChatLink(roomItem, e._id)
             });
             
         } else if (window.location.href != '/') {
@@ -29,7 +29,7 @@ async function getUserChats() {
         }
         return data;
     })
-    return response['data']
+    return response.data
 }
 
 function addChatLink(chatItem, chatId) {
