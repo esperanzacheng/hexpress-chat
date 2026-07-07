@@ -6,7 +6,7 @@ const mongooseSetting = {
     useUnifiedTopology: true, 
 }
 
-const uri = `mongodb+srv://${config.dbUser}:${config.dbPwd}@${config.dbName}.mem3brj.mongodb.net/hexpress?retryWrites=true&w=majority`
+const uri = `mongodb://${config.dbHost}:${config.dbPort}/${config.dbName}`
 
 exports.getConnection = () => {
     mongoose.set('strictQuery', false);
