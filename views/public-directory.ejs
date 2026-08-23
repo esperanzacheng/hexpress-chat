@@ -1,0 +1,28 @@
+<%- include('./partials/setup'); %>
+        <link rel="stylesheet" href='/styles/public.css' />
+        <script src="/socket.io/socket.io.js" defer></script>
+        <script src="/scripts/public-directory.js" defer></script>
+    </head>
+    <body>
+        <div class="public-navbar">
+            <a class="public-navbar-logo-box" href="/">
+                <img class="home-navbar-logo" src="/images/logo-white.png"/>
+            </a>
+            <div class="public-navbar-title">Public Chat Directory</div>
+            <div class="public-navbar-username" id="public-navbar-username"></div>
+        </div>
+        <div class="public-page-container">
+            <div class="public-card public-directory-card">
+                <div class="public-directory-header">
+                    <h1 class="public-card-title">Open Rooms</h1>
+                    <button id="show-create-room-button">+ New Room</button>
+                </div>
+                <div id="public-room-list"></div>
+                <form id="create-room-form" style="display: none;">
+                    <input type="text" id="create-room-name-input" placeholder="Room name" maxlength="60" required>
+                    <button type="submit" id="create-room-submit">Create</button>
+                </form>
+                <span id="create-room-error" class="public-form-error"></span>
+            </div>
+        </div>
+<%- include('./partials/footer'); %>

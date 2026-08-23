@@ -1,0 +1,137 @@
+.public-navbar {
+  display: flex;
+  align-items: center;
+  height: 80px;
+  background-color: #932020;
+  padding: 0 20px;
+}
+
+.public-navbar-logo-box {
+  display: grid;
+  place-items: center;
+}
+
+.public-navbar-title {
+  color: #F5E4CB;
+  font-size: 24px;
+  margin-left: 20px;
+}
+
+.public-navbar-username {
+  color: #FFC53F;
+  font-size: 18px;
+  margin-left: auto;
+}
+
+.public-page-container {
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+}
+
+.public-card {
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  padding: 30px;
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+}
+
+.public-card-title {
+  margin-top: 0;
+}
+
+.public-card-desc {
+  color: #3B3838;
+}
+
+#guest-name-form,
+#create-room-form {
+  display: grid;
+  grid-template-columns: auto 120px;
+  gap: 10px;
+}
+
+#guest-name-input,
+#create-room-name-input,
+#public-message-input {
+  height: 40px;
+  border: 1px solid #3B3838;
+  border-radius: 5px;
+}
+
+#guest-name-submit,
+#create-room-submit,
+#public-send-button,
+#show-create-room-button {
+  background-color: #FFC53F;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.public-form-error {
+  color: #932020;
+  display: block;
+  margin-top: 10px;
+}
+
+.public-directory-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#public-room-list {
+  margin: 20px 0;
+}
+
+.public-room-item {
+  padding: 10px;
+  border-bottom: 1px solid #F5E4CB;
+  cursor: pointer;
+}
+
+.public-room-item:hover {
+  background-color: #F5E4CB;
+}
+
+.public-room-card {
+  max-width: 700px;
+}
+
+#public-message-container {
+  height: 400px;
+  overflow-y: scroll;
+  border: 1px solid #F5E4CB;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.public-message-single {
+  margin-bottom: 10px;
+}
+
+.public-message-name {
+  font-weight: bold;
+  color: #932020;
+}
+
+.public-message-desc {
+  color: #3B3838;
+}
+
+.public-message-notice {
+  color: #999;
+  font-style: italic;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+#public-send-container {
+  display: grid;
+  grid-template-columns: auto 100px;
+  gap: 10px;
+}

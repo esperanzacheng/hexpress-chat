@@ -1,0 +1,26 @@
+<%- include('./partials/setup'); %>
+        <link rel="stylesheet" href='/styles/public.css' />
+        <script src="/scripts/guest.js" defer></script>
+    </head>
+    <body>
+        <div class="public-navbar">
+            <a class="public-navbar-logo-box" href="/">
+                <img class="home-navbar-logo" src="/images/logo-white.png"/>
+            </a>
+            <div class="public-navbar-title">Guest Entrance</div>
+        </div>
+        <div class="public-page-container">
+            <div class="public-card">
+                <h1 class="public-card-title">Join as a Guest</h1>
+                <p class="public-card-desc">
+                    No account needed. Pick a display name to browse the public
+                    room directory and start chatting. Guest messages are not saved.
+                </p>
+                <form id="guest-name-form">
+                    <input type="text" id="guest-name-input" placeholder="Display name" maxlength="30" required>
+                    <button type="submit" id="guest-name-submit">Enter</button>
+                </form>
+                <span id="guest-name-error" class="public-form-error"></span>
+            </div>
+        </div>
+<%- include('./partials/footer'); %>

@@ -14,6 +14,21 @@ app.use(express.json());
 const indexRoute = require('./routes/indexRoute.js');
 const chatController = require('./controllers/chatController.js');
 const compartmentController = require('./controllers/compartmentController.js');
+const Car = require('./models/carsModel.js');
+const Compartment = require('./models/compartmentsModel.js');
+
+// guest mode / public directory (see docs/specs/guest-mode-public-directory.md)
+const PUBLIC_CAR_ID = '000000000000000000000001';
+const ROOM_CREATION_LIMIT = 5;
+const ROOM_CREATION_WINDOW_MS = 60 * 60 * 1000;
+const PUBLIC_COMPARTMENT_CAP = 100;
+const roomCreationLog = new Map(); // ip -> timestamps[], resets on restart
+
+Car.findByIdAndUpdate(
+  PUBLIC_CAR_ID,
+  { name: 'Public', topic: 'Guest chat directory', members: [], members_count: 0, owner_id: null },
+  { upsert: true, setDefaultsOnInsert: true }
+).catch(err => console.error('Error seeding public car', err));
 
 app.use("/", indexRoute);
 
@@ -42,6 +57,9 @@ io.on('connection', (socket) => {
   // text chat join room
   socket.on('new-user', (room, user) => {
     socket.join(room)
+    if (rooms[room] == null) { // guard against a stale/unregistered room (e.g. reconnect after server restart)
+      rooms[room] = { users: {} }
+    }
     rooms[room].users[socket.id] = user
     socket.to(room).emit('user-connected', user)
   })
@@ -155,6 +173,75 @@ app.get('/car/:car/:compartment', async(req, res) => {
   } else { // redirect to this car's first compartment
     
     res.redirect(`/car/${req.params.car}/${thisCompartmentType._id}`)
+  }
+})
+
+// guest mode: name-entry landing page
+app.get('/guest', (req, res) => {
+  res.render('guest', { title: 'Guest' });
+})
+
+// guest mode: public room directory
+app.get('/public', (req, res) => {
+  res.render('public-directory', { title: 'Public Chat' });
+})
+
+// guest mode: join a public room
+app.get('/public/:compartment', async(req, res, next) => {
+  try {
+    const compartment = await Compartment.findOne({ _id: req.params.compartment, car_id: PUBLIC_CAR_ID });
+    if (!compartment) {
+      return res.redirect('/public');
+    }
+    if (rooms[req.params.compartment] == null) { // insert the compartment id into socket object if there's no record
+      rooms[req.params.compartment] = { users: {} }
+    }
+    res.render('public-room', { title: 'Guest Chat', roomName: req.params.compartment });
+  } catch (err) {
+    next(err);
+  }
+})
+
+// guest mode: list public rooms (no auth)
+app.get('/api/public/compartment', async(req, res, next) => {
+  try {
+    const allCompartment = await Compartment.find({ car_id: PUBLIC_CAR_ID });
+    res.status(200).json({ ok: true, data: allCompartment });
+  } catch (err) {
+    next(err);
+  }
+})
+
+// guest mode: create a public room (no auth, rate-limited)
+app.post('/api/public/compartment', async(req, res, next) => {
+  try {
+    const ip = req.ip;
+    const now = Date.now();
+    const recentCreations = (roomCreationLog.get(ip) || []).filter(t => now - t < ROOM_CREATION_WINDOW_MS);
+    if (recentCreations.length >= ROOM_CREATION_LIMIT) {
+      return res.status(429).json({ ok: false, error: 'Too many rooms created from this address, try again later' });
+    }
+
+    const existingCount = await Compartment.countDocuments({ car_id: PUBLIC_CAR_ID });
+    if (existingCount >= PUBLIC_COMPARTMENT_CAP) {
+      return res.status(400).json({ ok: false, error: 'Public room limit reached, please use an existing room' });
+    }
+
+    const name = (req.body.name || '').toString().trim().slice(0, 60);
+    if (!name) {
+      return res.status(400).json({ ok: false, error: 'Room name is required' });
+    }
+
+    const newCompartment = new Compartment({ name, type: true, car_id: PUBLIC_CAR_ID, owner_id: null });
+    const savedCompartment = await newCompartment.save();
+
+    recentCreations.push(now);
+    roomCreationLog.set(ip, recentCreations);
+
+    io.emit('room-created', savedCompartment);
+    res.status(200).json({ ok: true, data: savedCompartment });
+  } catch (err) {
+    next(err);
   }
 })
 

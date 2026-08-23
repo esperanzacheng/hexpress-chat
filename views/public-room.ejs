@@ -1,0 +1,26 @@
+<%- include('./partials/setup'); %>
+        <link rel="stylesheet" href='/styles/public.css' />
+        <script>
+            const roomName = "<%= roomName %>"
+        </script>
+        <script src="/socket.io/socket.io.js" defer></script>
+        <script src="/scripts/public-room.js" defer></script>
+    </head>
+    <body>
+        <div class="public-navbar">
+            <a class="public-navbar-logo-box" href="/public">
+                <img class="home-navbar-logo" src="/images/logo-white.png"/>
+            </a>
+            <div class="public-navbar-title">Guest Chat</div>
+            <div class="public-navbar-username" id="public-navbar-username"></div>
+        </div>
+        <div class="public-page-container">
+            <div class="public-card public-room-card">
+                <div id="public-message-container"></div>
+                <form id="public-send-container">
+                    <input type="text" id="public-message-input" placeholder="Type to Chat" autocomplete="off">
+                    <button type="submit" id="public-send-button">Send</button>
+                </form>
+            </div>
+        </div>
+<%- include('./partials/footer'); %>
