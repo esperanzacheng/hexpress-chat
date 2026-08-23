@@ -65,9 +65,9 @@ exports.postUser = async(req, res, next) => {
                 password: hashedPassword,
                 profilePicture: "5bce901229ea2f9f84190b1ed3d2799119a8f2c01433436e37f2bb77af0654c5"
               });
-            const thisUser = await newUser.save();
-    
-            res.status(200).json(thisUser);
+            await newUser.save();
+
+            res.status(200).json({ ok: true });
         }
     } catch (err) {
         if (!err.statusCode) {
@@ -84,7 +84,6 @@ exports.putUser = async(req, res, next) => {
         if (user === 401) {
             res.status(401).json("Unauthorized");
         } else {
-            let thisUser, response;
             if (req.file) {
 
                 const file = req.file;
@@ -97,30 +96,24 @@ exports.putUser = async(req, res, next) => {
                 await s3.uploadFile(fileBuffer, imageName, file.mimetype)
 
                 if (req.body.username) {
-                    thisUser = await User.findOneAndUpdate(
-                        { _id: user._id }, 
-                        { $set: { username: req.body.username, profilePicture: imageName } }, 
-                        { new: true }
+                    await User.findOneAndUpdate(
+                        { _id: user._id },
+                        { $set: { username: req.body.username, profilePicture: imageName } }
                     );
                 } else {
-                    thisUser = await User.findOneAndUpdate(
-                        { _id: user._id }, 
-                        { $set: { profilePicture: imageName } }, 
-                        { new: true }
+                    await User.findOneAndUpdate(
+                        { _id: user._id },
+                        { $set: { profilePicture: imageName } }
                     );
                 }
-                const postedFile = await s3.getObjectSignedUrl(imageName);
-                response = { user: thisUser, profilePicture: postedFile }
             } else {
-                thisUser = await User.findOneAndUpdate(
-                    { _id: user._id }, 
-                    { $set: { username: req.body.username } }, 
-                    { new: true }
+                await User.findOneAndUpdate(
+                    { _id: user._id },
+                    { $set: { username: req.body.username } }
                 );
-                response = { user: thisUser }
             }
-            
-            res.status(200).json({ok: true, data: response });
+
+            res.status(200).json({ ok: true });
         } 
     } catch (err) {
         if (!err.statusCode) {

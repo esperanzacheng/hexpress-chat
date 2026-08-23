@@ -84,7 +84,7 @@ exports.putFriendRequest = async(req, res, next) => {
                 { $set: { "friends.$.verified": 1 }},
                 { new: true }
            );
-            res.status(200).json({ ok: true, data: newFriend });
+            res.status(200).json( { ok: true, data: {_id: newFriend._id, username: newFriend.username, profilePicture: newFriend.profilePicture} });
         } 
     } catch (err) {
         if (!err.statusCode) {
